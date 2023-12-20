@@ -11,10 +11,6 @@ from scipy.io import wavfile
 from tqdm import tqdm
 from ttslearn.dsp import world_spss_params
 
-from scipy.io import wavfile
-from resampy import resample
-import numpy as np
-
 
 def get_parser():
     parser = argparse.ArgumentParser(
@@ -47,14 +43,7 @@ def preprocess(wav_file, lab_file, binary_dict, numeric_dict, sr, in_dir, out_di
     _sr, x = wavfile.read(wav_file)
     if x.dtype in [np.int16, np.int32]:
         x = (x / np.iinfo(x.dtype).max).astype(np.float64)
-    # 音声の読み込み
-    sr = 16000  # 新しいサンプリングレート
-    # 正規化（-1から1の範囲にスケーリング）
-    x = (x / 32768).astype(np.float64)
-    # リサンプリング
-    new_x = resample(x, _sr, sr)
-    x = new_x
-
+    x = librosa.resample(y=x, orig_sr=_sr, target_sr=sr).astype(np.float64)
     # workaround for over resampling: add a small white noise
     if sr > _sr:
         x = x + np.random.randn(len(x)) * (1 / 2 ** 15)
