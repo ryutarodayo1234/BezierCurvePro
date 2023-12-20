@@ -53,6 +53,8 @@ def preprocess(wav_file, lab_file, binary_dict, numeric_dict, sr, in_dir, out_di
     x = (x / 32768).astype(np.float64)
     # リサンプリング
     new_x = resample(x, _sr, sr)
+    x = new_x
+
     # workaround for over resampling: add a small white noise
     if sr > _sr:
         x = x + np.random.randn(len(x)) * (1 / 2 ** 15)
