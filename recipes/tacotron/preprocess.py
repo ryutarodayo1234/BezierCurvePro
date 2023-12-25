@@ -9,18 +9,7 @@ from nnmnkwii.io import hts
 from nnmnkwii.preprocessing import mulaw_quantize
 from scipy.io import wavfile
 from tqdm import tqdm
-
-# モジュールをダウンロードしてローカルに保存
-import urllib.request
-
-url = 'https://raw.githubusercontent.com/ryutarodayo1234/BezierCurvePro/main/ttslearn/dsp.py'
-filename = 'dsp.py'
-urllib.request.urlretrieve(url, filename)
-
-# ダウンロードしたモジュールをインポート
-import dsp
-from dsp import mulaw_quantize, logmelspectrogram
-
+from ttslearn.dsp import logmelspectrogram
 from ttslearn.tacotron.frontend.openjtalk import pp_symbols, text_to_sequence
 from ttslearn.util import pad_1d
 
@@ -130,3 +119,4 @@ if __name__ == "__main__":
         ]
         for future in tqdm(futures):
             future.result()
+            
