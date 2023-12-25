@@ -9,6 +9,7 @@ from nnmnkwii.io import hts
 from nnmnkwii.preprocessing import mulaw_quantize
 from scipy.io import wavfile
 from tqdm import tqdm
+from dsp import logmelspectrogram
 from ttslearn.tacotron.frontend.openjtalk import pp_symbols, text_to_sequence
 from ttslearn.util import pad_1d
 
