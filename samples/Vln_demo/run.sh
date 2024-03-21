@@ -42,17 +42,17 @@ expdir=exp/$expname
 if [ ${stage} -le -1 ] && [ ${stop_stage} -ge -1 ]; then
     echo "stage -1: Data download"
     mkdir -p downloads
-    if [ ! -d downloads/jsut_ver1.1 ]; then
+    if [ ! -d downloads/corpus_files ]; then
         cd downloads
         curl -LO https://github.com/ryutarodayo1234/BezierCurvePro/raw/main/samples/Vln_demo/corpus_files.zip
-        unzip -o jsut_ver1.1
+        unzip -o corpus_files
         cd -
     fi
-    if [ ! -d downloads/jsut-lab ]; then
+    if [ ! -d downloads/lab_files ]; then
         cd downloads
         curl -LO https://github.com/ryutarodayo1234/BezierCurvePro/raw/main/samples/Vln_demo/lab_files.zip
         unzip -o lab_files.zip
-        ln -s jsut-label-0.0.2 jsut-label
+        ln -s jlab_files
         cd -
     fi
 fi
