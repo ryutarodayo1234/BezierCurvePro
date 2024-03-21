@@ -80,6 +80,9 @@ def preprocess(
         # 韻律記号付き音素列の抽出
         PP = pp_symbols(labels.contexts)
         in_feats = np.array(text_to_sequence(PP), dtype=np.int64)
+        
+        # wavファイルを読み込む
+        _sr, x = wavfile.read(wav_file)
 
     # メルスペクトログラムの計算
     _sr, x = wavfile.read(wav_file)
