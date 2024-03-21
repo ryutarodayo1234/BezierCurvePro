@@ -21,7 +21,6 @@ dev_set="dev"
 eval_set="eval"
 datasets=($train_set $dev_set $eval_set)
 testsets=($eval_set)
-$wav_root = "/content/recipes/tacotron/dawnloads/"
 
 stage=0
 stop_stage=0
