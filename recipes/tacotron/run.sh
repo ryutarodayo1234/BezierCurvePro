@@ -45,7 +45,7 @@ if [ ${stage} -le -1 ] && [ ${stop_stage} -ge -1 ]; then
     if [ ! -d downloads/jsut_ver1.1 ]; then
         cd downloads
         curl -LO https://github.com/ryutarodayo1234/BezierCurvePro/raw/main/samples/Vln_demo/corpus_files.zip
-        unzip -o corpus_files.zip
+        unzip -o jsut_ver1.1
         cd -
     fi
     if [ ! -d downloads/jsut-lab ]; then
