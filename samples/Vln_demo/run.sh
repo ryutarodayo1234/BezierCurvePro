@@ -25,8 +25,9 @@ testsets=($eval_set)
 stage=0
 stop_stage=0
 
-wav_root=/content/recipes/tacotron/downloads/
-lab_root=/content/recipes/tacotron/downloads/
+# wav_rootとlab_rootの値を設定
+wav_root="/content/recipes/tacotron/downloads/"
+lab_root="/content/recipes/tacotron/downloads/"
 
 . $COMMON_ROOT/parse_options.sh || exit 1;
 
