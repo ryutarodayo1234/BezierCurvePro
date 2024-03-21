@@ -86,71 +86,47 @@ def preprocess(
         # wavファイルを読み込む
         _sr, x = wavfile.read(wav_file)
 
-    # メルスペクトログラムの計算
-    import os
-    # ラベルファイルのリストを取得
-    label_files = glob.glob(os.path.join(lab_root, "files*"))
-    # WAVファイルのパターン
-    wav_pattern = "files*.wav"
-    for lab_file in label_files:
-        # WAVファイルのディレクトリ
-        wav_dir = os.path.join(wav_root, os.path.basename(lab_file).replace(".lab", ""))
-        # WAVファイルのリストを取得
-        wav_files = glob.glob(os.path.join(wav_dir, wav_pattern))
-        for wav_file in wav_files:
-            # ラベルファイル名とWAVファイル名が一致することを確認
-            assert os.path.splitext(wav_file)[0] == os.path.splitext(lab_file)[0]
-            # ラベルファイルを読み込む
-            with open(lab_file, 'r') as f:
-                labels = f.read()
-            # 韻律記号付き音素列の抽出
-            PP = pp_symbols(labels)
-            in_feats = np.array(text_to_sequence(PP), dtype=np.int64)
-            # wavファイルを読み込む
-            _sr, x = wavfile.read(wav_file)
+        # メルスペクトログラムの計算
+        if x.dtype in [np.int16, np.int32]:
+            x = (x / np.iinfo(x.dtype).max).astype(np.float64)
+        x = librosa.resample(y=x, orig_sr=_sr, target_sr=sr)
+        out_feats = logmelspectrogram(x, sr)
 
-            # サンプルの型が int16 または int32 の場合には正規化が必要
-            if x.dtype in [np.int16, np.int32]:
-                x = (x / np.iinfo(x.dtype).max).astype(np.float64)
+        # 冒頭と末尾の非音声区間の長さを調整
+        assert "sil" in labels.contexts[0] and "sil" in labels.contexts[-1]
+        start_frame = int(labels.start_times[1] / 125000)
+        end_frame = int(labels.end_times[-2] / 125000)
 
-            x = librosa.resample(y=x, orig_sr=_sr, target_sr=sr)
-            out_feats = logmelspectrogram(x, sr)
+        # 冒頭： 50 ミリ秒、末尾： 100 ミリ秒
+        start_frame = max(0, start_frame - int(0.050 / 0.0125))
+        end_frame = min(len(out_feats), end_frame + int(0.100 / 0.0125))
 
-            # 冒頭と末尾の非音声区間の長さを調整
-            assert "sil" in labels.contexts[0] and "sil" in labels.contexts[-1]
-            start_frame = int(labels.start_times[1] / 125000)
-            end_frame = int(labels.end_times[-2] / 125000)
+        out_feats = out_feats[start_frame:end_frame]
 
-            # 冒頭： 50 ミリ秒、末尾： 100 ミリ秒
-            start_frame = max(0, start_frame - int(0.050 / 0.0125))
-            end_frame = min(len(out_feats), end_frame + int(0.100 / 0.0125))
+        # 時間領域で音声の長さを調整
+        x = x[int(start_frame * 0.0125 * sr) :]
+        length = int(sr * 0.0125) * out_feats.shape[0]
+        x = pad_1d(x, length) if len(x) < length else x[:length]
 
-            out_feats = out_feats[start_frame:end_frame]
+        # 特徴量のアップサンプリングを行う都合上、音声波形の長さはフレームシフトで割り切れる必要があります
+        assert len(x) % int(sr * 0.0125) == 0
 
-            # 時間領域で音声の長さを調整
-            x = x[int(start_frame * 0.0125 * sr) :]
-            length = int(sr * 0.0125) * out_feats.shape[0]
-            x = pad_1d(x, length) if len(x) < length else x[:length]
+        # mu-law量子化
+        x = mulaw_quantize(x, mu)
 
-            # 特徴量のアップサンプリングを行う都合上、音声波形の長さはフレームシフトで割り切れる必要があります
-            assert len(x) % int(sr * 0.0125) == 0
-
-            # mu-law量子化
-            x = mulaw_quantize(x, mu)
-
-            # save to files
-            utt_id = lab_file.stem
-            np.save(in_dir / f"{utt_id}-feats.npy", in_feats, allow_pickle=False)
-            np.save(
-                out_dir / f"{utt_id}-feats.npy",
-                out_feats.astype(np.float32),
-                allow_pickle=False,
-            )
-            np.save(
-                wave_dir / f"{utt_id}-feats.npy",
-                x.astype(np.int64),
-                allow_pickle=False,
-            )
+        # save to files
+        utt_id = lab_file.stem
+        np.save(in_dir / f"{utt_id}-feats.npy", in_feats, allow_pickle=False)
+        np.save(
+            out_dir / f"{utt_id}-feats.npy",
+            out_feats.astype(np.float32),
+            allow_pickle=False,
+        )
+        np.save(
+            wave_dir / f"{utt_id}-feats.npy",
+            x.astype(np.int64),
+            allow_pickle=False,
+        )
 
 
 if __name__ == "__main__":
