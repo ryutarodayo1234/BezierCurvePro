@@ -55,8 +55,6 @@ def preprocess(
 ):
     import os
     import glob
-    import numpy as np
-    from scipy.io import wavfile
     from ttslearn.tacotron.frontend.openjtalk import pp_symbols, text_to_sequence
 
     # ラベルファイルのルートディレクトリ
