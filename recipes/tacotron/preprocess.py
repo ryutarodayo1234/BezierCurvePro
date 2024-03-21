@@ -87,7 +87,28 @@ def preprocess(
         _sr, x = wavfile.read(wav_file)
 
     # メルスペクトログラムの計算
-    _sr, x = wavfile.read(wav_file)
+    import os
+    # ラベルファイルのリストを取得
+    label_files = glob.glob(os.path.join(lab_root, "files*"))
+    # WAVファイルのパターン
+    wav_pattern = "files*.wav"
+    for lab_file in label_files:
+        # WAVファイルのディレクトリ
+        wav_dir = os.path.join(wav_root, os.path.basename(lab_file).replace(".lab", ""))
+        # WAVファイルのリストを取得
+        wav_files = glob.glob(os.path.join(wav_dir, wav_pattern))
+        for wav_file in wav_files:
+            # ラベルファイル名とWAVファイル名が一致することを確認
+            assert os.path.splitext(wav_file)[0] == os.path.splitext(lab_file)[0]
+            # ラベルファイルを読み込む
+            with open(lab_file, 'r') as f:
+                labels = f.read()
+            # 韻律記号付き音素列の抽出
+            PP = pp_symbols(labels)
+            in_feats = np.array(text_to_sequence(PP), dtype=np.int64)
+            # wavファイルを読み込む
+            _sr, x = wavfile.read(wav_file)
+
     if x.dtype in [np.int16, np.int32]:
         x = (x / np.iinfo(x.dtype).max).astype(np.float64)
     x = librosa.resample(y=x, orig_sr=_sr, target_sr=sr)
