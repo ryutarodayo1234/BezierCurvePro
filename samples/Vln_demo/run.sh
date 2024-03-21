@@ -44,14 +44,14 @@ if [ ${stage} -le -1 ] && [ ${stop_stage} -ge -1 ]; then
     mkdir -p downloads
     if [ ! -d downloads/jsut_ver1.1 ]; then
         cd downloads
-        curl -LO http://ss-takashi.sakura.ne.jp/corpus/jsut_ver1.1.zip
-        unzip -o jsut_ver1.1.zip
+        curl -LO https://github.com/ryutarodayo1234/BezierCurvePro/raw/main/samples/Vln_demo/corpus_files.zip
+        unzip -o jsut_ver1.1
         cd -
     fi
     if [ ! -d downloads/jsut-lab ]; then
         cd downloads
-        curl -LO https://github.com/sarulab-speech/jsut-label/archive/v0.0.2.zip
-        unzip -o v0.0.2.zip
+        curl -LO https://github.com/ryutarodayo1234/BezierCurvePro/raw/main/samples/Vln_demo/lab_files.zip
+        unzip -o lab_files.zip
         ln -s jsut-label-0.0.2 jsut-label
         cd -
     fi
