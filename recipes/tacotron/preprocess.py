@@ -114,17 +114,10 @@ def preprocess(
 
         # save to files
         utt_id = lab_file.stem
-        np.save(in_dir / f"{utt_id}-feats.npy", in_feats, allow_pickle=False)
-        np.save(
-            out_dir / f"{utt_id}-feats.npy",
-            out_feats.astype(np.float32),
-            allow_pickle=False,
-        )
-        np.save(
-            wave_dir / f"{utt_id}-feats.npy",
-            x.astype(np.int64),
-            allow_pickle=False,
-        )
+        np.save(in_dir / "in_tacotron" / f"{utt_id}-feats.npy", in_feats, allow_pickle=False)
+        np.save(out_dir / "out_tacotron" / f"{utt_id}-feats.npy", out_feats.astype(np.float32), allow_pickle=False)
+        np.save(wave_dir / "out_wavenet" / f"{utt_id}-feats.npy", x.astype(np.int64), allow_pickle=False)
+
 
 
 if __name__ == "__main__":

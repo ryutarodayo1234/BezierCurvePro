@@ -62,10 +62,15 @@ if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
     echo "train/dev/eval split"
     mkdir -p data
     find $wav_root -name "*.wav" -exec basename {} .wav \; | sort > data/utt_list.txt
-    head -n 4700 data/utt_list.txt > data/train.list
-    tail -300 data/utt_list.txt > data/deveval.list
-    head -n 200 data/deveval.list > data/dev.list
-    tail -n 100 data/deveval.list > data/eval.list
+    #utt_list.txt ファイルの上位 4700 行を data/train.list に書き込みます。これは訓練データに使用されます。
+    #utt_list.txt ファイルの下位 300 行を data/deveval.list に書き込みます。
+    #deveval.list ファイルの上位 200 行を data/dev.list に書き込みます。これは開発データに使用されます。
+    #deveval.list ファイルの下位 100 行を data/eval.list に書き込みます。これは評価データに使用されます。
+    #不要な deveval.list ファイルを削除します。
+    head -n 15 data/utt_list.txt > data/train.list
+    tail -1 data/utt_list.txt > data/deveval.list
+    head -n 5 data/deveval.list > data/dev.list
+    tail -n 5 data/deveval.list > data/eval.list
     rm -f data/deveval.list
 fi
 
