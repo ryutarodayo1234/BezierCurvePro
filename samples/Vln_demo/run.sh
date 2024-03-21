@@ -70,7 +70,7 @@ if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
 fi
 
 if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
-    echo "stage 1: Feature generation for Tacotron"
+    echo "stage 1: Tacotronのための特徴量生成"
     for s in ${datasets[@]}; do
         xrun python preprocess.py data/$s.list /content/recipes/tacotron/downloads/ $lab_root \
             $dump_org_dir/$s --n_jobs $n_jobs \
