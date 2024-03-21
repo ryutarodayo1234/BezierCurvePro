@@ -26,8 +26,8 @@ stage=0
 stop_stage=0
 
 # wav_rootとlab_rootの値を設定
-wav_root="/content/recipes/tacotron/downloads/"
-lab_root="/content/recipes/tacotron/downloads/"
+wav_root="/content/recipes/tacotron/downloads/corpus_files/"
+lab_root="/content/recipes/tacotron/downloads/lab_files/"
 
 . $COMMON_ROOT/parse_options.sh || exit 1;
 
@@ -46,13 +46,13 @@ expdir=exp/$expname
 if [ ${stage} -le -1 ] && [ ${stop_stage} -ge -1 ]; then
     echo "stage -1: Data download"
     mkdir -p downloads
-    if [ ! -d downloads/corpus_files ]; then
+    if [ ! -d downloads/corpus_files/ ]; then
         cd downloads
         curl -LO https://github.com/ryutarodayo1234/BezierCurvePro/raw/main/samples/Vln_demo/corpus_files.zip
         unzip -o corpus_files
         cd -
     fi
-    if [ ! -d downloads/lab_files ]; then
+    if [ ! -d downloads/lab_files/ ]; then
         cd downloads
         curl -LO https://github.com/ryutarodayo1234/BezierCurvePro/raw/main/samples/Vln_demo/lab_files.zip
         unzip -o lab_files.zip
