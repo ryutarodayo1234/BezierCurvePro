@@ -127,36 +127,15 @@ def numeric_feature_by_regex(regex, s):
     return int(match.group(1))
 
 
-def pp_symbols(labels, drop_unvoiced_vowels=True):
-    """Extract phoneme + prosoody symbol sequence from input full-context labels
-
-    The algorithm is based on [Kurihara 2021] [1]_ with some tweaks.
-
-    Args:
-        labels (HTSLabelFile): List of labels
-        drop_unvoiced_vowels (bool): Drop unvoiced vowels. Defaults to True.
-
-    Returns:
-        list: List of phoneme + prosody symbols
-
-    .. ipython::
-
-        In [11]: import ttslearn
-
-        In [12]: from nnmnkwii.io import hts
-
-        In [13]: from ttslearn.tacotron.frontend.openjtalk import pp_symbols
-
-        In [14]: labels = hts.load(ttslearn.util.example_label_file())
-
-        In [15]: " ".join(pp_symbols(labels.contexts))
-        Out[15]: '^ m i [ z u o # m a [ r e ] e sh i a k a r a ... $'
-
-    .. [1] K. Kurihara, N. Seiyama, and T. Kumano, “Prosodic features control by
-        symbols as input of sequence-to-sequence acoustic modeling for neural tts,”
-        IEICE Transactions on Information and Systems, vol. E104.D, no. 2,
-        pp. 302–311, 2021.
-    """
+def pp_symbols(labels, additional_symbols=None):
+    # OpenJTalkラベルから韻律記号付き音素列を抽出する
+    if additional_symbols:
+        symbols = "|".join([r"\b" + re.escape(s) + r"\b" for s in additional_symbols])
+        symbols_pattern = f"({symbols})"
+        symbols_pattern = re.compile(symbols_pattern)
+    else:
+        symbols_pattern = re.compile(r"\[.*?\]")
+        
     PP = []
     N = len(labels)
 
