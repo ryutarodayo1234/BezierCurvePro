@@ -53,12 +53,33 @@ def preprocess(
     out_dir,
     wave_dir,
 ):
-    assert wav_file.stem == lab_file.stem
-    lab_file = os.path.join(lab_root, 'files1')
-    labels = hts.load(lab_file)
-    # 韻律記号付き音素列の抽出
-    PP = pp_symbols(labels.contexts)
-    in_feats = np.array(text_to_sequence(PP), dtype=np.int64)
+    import os
+    import glob
+
+    from ttslearn.tacotron.frontend.openjtalk import pp_symbols, text_to_sequence
+
+    # ラベルファイルのルートディレクトリ
+    lab_root = "downloads/lab_files"
+
+    # wavファイルのルートディレクトリ
+    wav_root = "downloads/corpus_files"
+
+    # ラベルファイルのリストを取得
+    label_files = glob.glob(os.path.join(lab_root, "files*"))
+
+    for lab_file in label_files:
+        # wavファイルのパスを取得
+        wav_file = os.path.join(wav_root, os.path.basename(lab_file).replace(".lab", ".wav"))
+        
+        # wavファイル名とラベルファイル名が一致することを確認
+        assert wav_file.stem == lab_file.stem
+        
+        # ラベルファイルを読み込む
+        labels = hts.load(lab_file)
+        
+        # 韻律記号付き音素列の抽出
+        PP = pp_symbols(labels.contexts)
+        in_feats = np.array(text_to_sequence(PP), dtype=np.int64)
 
     # メルスペクトログラムの計算
     _sr, x = wavfile.read(wav_file)
