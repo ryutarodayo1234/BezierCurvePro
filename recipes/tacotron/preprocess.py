@@ -109,8 +109,13 @@ def preprocess(
             # wavファイルを読み込む
             _sr, x = wavfile.read(wav_file)
 
+    # wavファイルを読み込む
+    _sr, x = wavfile.read(wav_file)
+
+    # サンプルの型が int16 または int32 の場合には正規化が必要
     if x.dtype in [np.int16, np.int32]:
         x = (x / np.iinfo(x.dtype).max).astype(np.float64)
+
     x = librosa.resample(y=x, orig_sr=_sr, target_sr=sr)
     out_feats = logmelspectrogram(x, sr)
 
