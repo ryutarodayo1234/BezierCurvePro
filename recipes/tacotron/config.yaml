@@ -24,8 +24,8 @@ cudnn_deterministic: false
 ###########################################################
 
 # PLEASE CHANGE THE PATH BASED ON YOUR ENVIRONMENT
-wav_root: "downloads/jsut_ver1.1/basic5000/wav"
-lab_root: "downloads/jsut-label/labels/basic5000"
+wav_root: "downloads/corpus_files"
+lab_root: "downloads/lab_files"
 
 n_jobs: 4
 
