@@ -70,7 +70,7 @@ def preprocess(
 
     for lab_file in label_files:
         # wavファイルのパスを取得
-        wav_file = os.path.join(wav_root, os.path.basename(wav_root, "files*"))
+        wav_file = os.path.join(wav_root, os.path.basename(lab_file).replace(".lab", ".wav"))
 
         # ラベルファイル名とwavファイル名が一致することを確認
         assert os.path.splitext(wav_file)[0] == os.path.splitext(lab_file)[0]
