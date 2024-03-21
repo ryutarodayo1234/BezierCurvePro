@@ -25,6 +25,9 @@ testsets=($eval_set)
 stage=0
 stop_stage=0
 
+wav_root=/content/recipes/tacotron/downloads/
+lab_root=/content/recipes/tacotron/downloads/
+
 . $COMMON_ROOT/parse_options.sh || exit 1;
 
 dumpdir=dump
@@ -61,7 +64,7 @@ if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
     echo "stage 0: Data preparation"
     echo "train/dev/eval split"
     mkdir -p data
-    find /content/recipes/tacotron/downloads/ -name "*.wav" -exec basename {} .wav \; | sort > data/utt_list.txt
+    find $wav_root -name "*.wav" -exec basename {} .wav \; | sort > data/utt_list.txt
     head -n 4700 data/utt_list.txt > data/train.list
     tail -300 data/utt_list.txt > data/deveval.list
     head -n 200 data/deveval.list > data/dev.list
