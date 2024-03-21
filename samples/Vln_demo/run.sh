@@ -42,13 +42,13 @@ expdir=exp/$expname
 if [ ${stage} -le -1 ] && [ ${stop_stage} -ge -1 ]; then
     echo "stage -1: Data download"
     mkdir -p downloads
-    if [ ! -d downloads/corpus_files ]; then
+    if [ ! -d wavs/corpus_files ]; then
         cd downloads
         curl -LO https://github.com/ryutarodayo1234/BezierCurvePro/raw/main/samples/Vln_demo/corpus_files.zip
         unzip -o corpus_files
         cd -
     fi
-    if [ ! -d downloads/lab_files ]; then
+    if [ ! -d wavs/lab_files ]; then
         cd downloads
         curl -LO https://github.com/ryutarodayo1234/BezierCurvePro/raw/main/samples/Vln_demo/lab_files.zip
         unzip -o lab_files.zip
@@ -61,7 +61,7 @@ if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
     echo "stage 0: Data preparation"
     echo "train/dev/eval split"
     mkdir -p data
-    find /content/recipes/tacotron/ -name "*.wav" -exec basename {} .wav \; | sort > data/utt_list.txt
+    find $wav_root -name "*.wav" -exec basename {} .wav \; | sort > data/utt_list.txt
     head -n 4700 data/utt_list.txt > data/train.list
     tail -300 data/utt_list.txt > data/deveval.list
     head -n 200 data/deveval.list > data/dev.list
