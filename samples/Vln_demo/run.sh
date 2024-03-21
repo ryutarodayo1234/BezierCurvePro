@@ -72,7 +72,7 @@ fi
 if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
     echo "stage 1: Feature generation for Tacotron"
     for s in ${datasets[@]}; do
-        xrun python preprocess.py data/$s.list $wav_root $lab_root \
+        xrun python preprocess.py data/$s.list /content/recipes/tacotron/downloads/ $lab_root \
             $dump_org_dir/$s --n_jobs $n_jobs \
             --sample_rate $sample_rate --mu $mu
     done
