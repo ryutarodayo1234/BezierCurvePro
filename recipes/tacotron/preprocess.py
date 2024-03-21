@@ -57,7 +57,6 @@ def preprocess(
     import glob
     import numpy as np
     from scipy.io import wavfile
-    import hts # Assuming hts is a module that contains the load function
     from ttslearn.tacotron.frontend.openjtalk import pp_symbols, text_to_sequence
 
     # ラベルファイルのルートディレクトリ
@@ -77,15 +76,15 @@ def preprocess(
         assert os.path.splitext(wav_file)[0] == os.path.splitext(lab_file)[0]
 
         # ラベルファイルを読み込む
-        labels = hts.load(lab_file)
+        with open(lab_file, 'r') as f:
+            labels = f.read()
 
         # 韻律記号付き音素列の抽出
-        PP = pp_symbols(labels.contexts)
+        PP = pp_symbols(labels)
         in_feats = np.array(text_to_sequence(PP), dtype=np.int64)
 
         # wavファイルを読み込む
         _sr, x = wavfile.read(wav_file)
-
 
     # メルスペクトログラムの計算
     _sr, x = wavfile.read(wav_file)
