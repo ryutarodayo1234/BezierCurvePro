@@ -61,7 +61,7 @@ if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
     echo "stage 0: Data preparation"
     echo "train/dev/eval split"
     mkdir -p data
-    find $wav_root -name "*.wav" -exec basename {} .wav \; | sort > data/utt_list.txt
+    find /content/recipes/tacotron/downloads/ -name "*.wav" -exec basename {} .wav \; | sort > data/utt_list.txt
     head -n 4700 data/utt_list.txt > data/train.list
     tail -300 data/utt_list.txt > data/deveval.list
     head -n 200 data/deveval.list > data/dev.list
