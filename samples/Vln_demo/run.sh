@@ -25,8 +25,6 @@ testsets=($eval_set)
 stage=0
 stop_stage=0
 
-# wav_rootとlab_rootの値を設定
-
 . $COMMON_ROOT/parse_options.sh || exit 1;
 
 dumpdir=dump
@@ -45,13 +43,13 @@ if [ ${stage} -le -1 ] && [ ${stop_stage} -ge -1 ]; then
     echo "stage -1: Data download"
     mkdir -p downloads
     if [ ! -d downloads/corpus_files ]; then
-        cd /content/recipes/tacotron/downloads/corpus_files/
+        cd downloads/corpus_files/
         curl -LO https://github.com/ryutarodayo1234/BezierCurvePro/raw/main/samples/Vln_demo/corpus_files.zip
         unzip -o corpus_files
         cd -
     fi
     if [ ! -d downloads/lab_files ]; then
-        cd /content/recipes/tacotron/downloads/lab_files/
+        cd downloads/lab_files/
         curl -LO https://github.com/ryutarodayo1234/BezierCurvePro/raw/main/samples/Vln_demo/lab_files.zip
         unzip -o lab_files.zip
         ln -s jlab_files
