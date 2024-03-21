@@ -54,6 +54,7 @@ def preprocess(
     wave_dir,
 ):
     assert wav_file.stem == lab_file.stem
+    lab_file = os.path.join(lab_root, 'files1')
     labels = hts.load(lab_file)
     # 韻律記号付き音素列の抽出
     PP = pp_symbols(labels.contexts)
