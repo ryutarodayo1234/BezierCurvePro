@@ -35,7 +35,7 @@ def get_parser():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("utt_list", type=str, help="utternace list")
-    parser.add_argument("wav_root", type=str, help="wav root")
+    parser.add_argument("wav_root", type=str, help="wav_root")
     parser.add_argument("lab_root", type=str, help="lab_root")
     parser.add_argument("out_dir", type=str, help="out directory")
     parser.add_argument("--n_jobs", type=int, default=1, help="Number of jobs")
