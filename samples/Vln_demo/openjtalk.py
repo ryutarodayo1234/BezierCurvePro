@@ -56,6 +56,62 @@ extra_symbols = [
     "#",  # アクセント句境界
     "[",  # ピッチの上がり位置
     "]",  # ピッチの下がり位置
+
+    '_',
+
+    'C1', 'C#1', 'D1', 'D#1', 'E1', 'F1', 'F#1', 'G1', 'G#1', 'A1', 'A#1', 'B1',
+    'C2', 'C#2', 'D2', 'D#2', 'E2', 'F2', 'F#2', 'G2', 'G#2', 'A2', 'A#2', 'B2',
+    'C3', 'C#3', 'D3', 'D#3', 'E3', 'F3', 'F#3', 'G3', 'G#3', 'A3', 'A#3', 'B3',
+    'C4', 'C#4', 'D4', 'D#4', 'E4', 'F4', 'F#4', 'G4', 'G#4', 'A4', 'A#4', 'B4',
+    'C5', 'C#5', 'D5', 'D#5', 'E5', 'F5', 'F#5', 'G5', 'G#5', 'A5', 'A#5', 'B5',
+    'C6', 'C#6', 'D6', 'D#6', 'E6', 'F6', 'F#6', 'G6', 'G#6', 'A6', 'A#6', 'B6',
+
+    'D-1', 'E-1', 'G-1', 'A-1', 'B-1',
+    'D-2', 'E-2', 'G-2', 'A-2', 'B-2',
+    'D-3', 'E-3', 'G-3', 'A-3', 'B-3',
+    'D-4', 'E-4', 'G-4', 'A-4', 'B-4',
+    'D-5', 'E-5', 'G-5', 'A-5', 'B-5',
+    'D-6', 'E-6', 'G-6', 'A-6', 'B-6',
+
+    'whole', 'half', 'quarter', 'eighth', '16th', '32nd', '64th', '128th',
+
+    'common', 'cut', '2/2', '2/4', '3/2', '3/4', '4/2', '4/4', '5/2', '5/4', '6/2', '6/4', '7/2', '7/4', '8/2', '8/4', '9/2', '9/4', '12/2', '12/4',
+
+    'C major', 'G major', 'D major', 'A major', 'E major', 'B major', 'F# major', 'C# major',
+    'F major', 'Bb major', 'Eb major', 'Ab major', 'Db major', 'Gb major', 'Cb major',
+    'a minor', 'e minor', 'b minor', 'f# minor', 'c# minor', 'g# minor', 'd# minor', 'a# minor',
+    'd minor', 'g minor', 'c minor', 'f minor', 'bb minor', 'eb minor', 'ab minor',
+    'C lydian', 'G lydian', 'D lydian', 'A lydian', 'E lydian', 'B lydian', 'F# lydian', 'C# lydian',
+    'C mixolydian', 'G mixolydian', 'D mixolydian', 'A mixolydian', 'E mixolydian', 'B mixolydian', 'F# mixolydian', 'C# mixolydian',
+    'C dorian', 'G dorian', 'D dorian', 'A dorian', 'E dorian', 'B dorian', 'F# dorian', 'C# dorian',
+    'C phrygian', 'G phrygian', 'D phrygian', 'A phrygian', 'E phrygian', 'B phrygian', 'F# phrygian', 'C# phrygian',
+    'C aeolian', 'G aeolian', 'D aeolian', 'A aeolian', 'E aeolian', 'B aeolian', 'F# aeolian', 'C# aeolian',
+    'C locrian', 'G locrian', 'D locrian', 'A locrian', 'E locrian', 'B locrian', 'F# locrian', 'C# locrian',
+
+    'ppp', 'pp', 'p', 'mp', 'mf', 'f', 'ff', 'fff', 'sffz',
+
+    'grave', 'larghissimo', 'larghetto', 'largo', 'lento', 'adagio', 'andante', 'moderato', 'allegretto', 'allegro', 'vivace', 'presto', 'prestissimo',
+
+    'staccato', 'tenuto', 'marcato', 'accent', 'portato', 'legato',
+
+    'segno', 'coda', 'D.C.', 'D.S.', 'fine', 'To Coda', 'To Fine', 'To Segno', 'Da Capo', 'Dal Segno', 'Dal Segno al Coda', 'Da Capo al Fine', 'Da Capo al Segno', 'Da Capo al Coda',
+
+    'fermata', 'fermata square', 'fermata triangle', 'fermata circle',
+
+    'adagio', 'andante', 'moderato', 'allegretto', 'allegro', 'vivace', 'presto', 'prestissimo',
+    'ritardando', 'rit.', 'accelerando', 'accel.', 'rallentando', 'rall.', 'stringendo', 'stretto', 'allargando', 'a tempo',
+
+    'crescendo', 'cresc.', 'diminuendo', 'dim.', 'decrescendo', 'decresc.', 'crescendo diminuendo', 'crescendo-diminuendo', 'decrescendo crescendo', 'decrescendo-crescendo', 'hairpin', 'hairpin crescendo', 'hairpin diminuendo', 'hairpin decrescendo',
+
+    '8va', '8vb', '15ma', '15mb', 'loco',
+
+    'tremolo', 'trem.', 'tremolando', 'tremol.', 'tr.', 'trill',
+
+    'accent', 'marcato', 'sforzando', 'sfz', 'strong accent', 'heavy accent', 'stress accent',
+
+    'text', 'lyric', 'tempo', 'direction', 'annotation', 'rehearsal mark', 'dynamic mark', 'tempo mark', 'expression', 'articulation',
+    'segno', 'coda', 'D.C.', 'D.S.', 'fine', 'To Coda', 'To Fine', 'To Segno', 'Da Capo', 'Dal Segno', 'Dal Segno al Coda', 'Da Capo al Fine', 'Da Capo al Segno', 'Da Capo al Coda',
+
 ]
 
 _pad = "~"
@@ -130,14 +186,36 @@ additional_symbols = [
     'segno', 'coda', 'D.C.', 'D.S.', 'fine', 'To Coda', 'To Fine', 'To Segno', 'Da Capo', 'Dal Segno', 'Dal Segno al Coda', 'Da Capo al Fine', 'Da Capo al Segno', 'Da Capo al Coda',
 ]
 
-def pp_symbols(labels, additional_symbols=None):
-    # OpenJTalkラベルから韻律記号付き音素列を抽出する
-    if additional_symbols:
-        symbols = "|".join(map(re.escape, additional_symbols))
-        symbols_pattern = re.compile(f"({'|'.join(map(re.escape, additional_symbols))})")
-    else:
-        symbols_pattern = re.compile(r"\[.*?\]")
-        
+def pp_symbols(labels, drop_unvoiced_vowels=True):
+    """Extract phoneme + prosoody symbol sequence from input full-context labels
+
+    The algorithm is based on [Kurihara 2021] [1]_ with some tweaks.
+
+    Args:
+        labels (HTSLabelFile): List of labels
+        drop_unvoiced_vowels (bool): Drop unvoiced vowels. Defaults to True.
+
+    Returns:
+        list: List of phoneme + prosody symbols
+
+    .. ipython::
+
+        In [11]: import ttslearn
+
+        In [12]: from nnmnkwii.io import hts
+
+        In [13]: from ttslearn.tacotron.frontend.openjtalk import pp_symbols
+
+        In [14]: labels = hts.load(ttslearn.util.example_label_file())
+
+        In [15]: " ".join(pp_symbols(labels.contexts))
+        Out[15]: '^ m i [ z u o # m a [ r e ] e sh i a k a r a ... $'
+
+    .. [1] K. Kurihara, N. Seiyama, and T. Kumano, “Prosodic features control by
+        symbols as input of sequence-to-sequence acoustic modeling for neural tts,”
+        IEICE Transactions on Information and Systems, vol. E104.D, no. 2,
+        pp. 302–311, 2021.
+    """
     PP = []
     N = len(labels)
 
@@ -147,6 +225,29 @@ def pp_symbols(labels, additional_symbols=None):
 
         # 当該音素
         p3 = re.search(r"\-(.*?)\+", lab_curr).group(1)  # type: ignore
+
+        # 無声化母音を通常の母音として扱う
+        if drop_unvoiced_vowels and p3 in "AEIOU":
+            p3 = p3.lower()
+
+        # 先頭と末尾の sil のみ例外対応
+        if p3 == "sil":
+            assert n == 0 or n == N - 1
+            if n == 0:
+                PP.append("^")
+            elif n == N - 1:
+                # 疑問系かどうか
+                e3 = numeric_feature_by_regex(r"!(\d+)_", lab_curr)
+                if e3 == 0:
+                    PP.append("$")
+                elif e3 == 1:
+                    PP.append("?")
+            continue
+        elif p3 == "pau":
+            PP.append("_")
+            continue
+        else:
+            PP.append(p3)
 
         # アクセント型および位置情報（前方または後方）
         a1 = numeric_feature_by_regex(r"/A:([0-9\-]+)\+", lab_curr)
