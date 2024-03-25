@@ -149,29 +149,6 @@ def pp_symbols(labels, additional_symbols=None):
         # 当該音素
         p3 = re.search(r"\-(.*?)\+", lab_curr).group(1)  # type: ignore
 
-        # 無声化母音を通常の母音として扱う
-        if drop_unvoiced_vowels and p3 in "AEIOU":
-            p3 = p3.lower()
-
-        # 先頭と末尾の sil のみ例外対応
-        if p3 == "sil":
-            assert n == 0 or n == N - 1
-            if n == 0:
-                PP.append("^")
-            elif n == N - 1:
-                # 疑問系かどうか
-                e3 = numeric_feature_by_regex(r"!(\d+)_", lab_curr)
-                if e3 == 0:
-                    PP.append("$")
-                elif e3 == 1:
-                    PP.append("?")
-            continue
-        elif p3 == "pau":
-            PP.append("_")
-            continue
-        else:
-            PP.append(p3)
-
         # アクセント型および位置情報（前方または後方）
         a1 = numeric_feature_by_regex(r"/A:([0-9\-]+)\+", lab_curr)
         a2 = numeric_feature_by_regex(r"\+(\d+)\+", lab_curr)
