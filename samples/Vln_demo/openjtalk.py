@@ -73,7 +73,7 @@ def numeric_feature_by_regex(regex, s):
         return -50
     return int(match.group(1))
 
-additional_symbols2 = [
+additional_symbols = [
     '_',
 
     'C1', 'C#1', 'D1', 'D#1', 'E1', 'F1', 'F#1', 'G1', 'G#1', 'A1', 'A#1', 'B1',
@@ -133,7 +133,7 @@ additional_symbols2 = [
 def pp_symbols(labels, additional_symbols=None):
     # OpenJTalkラベルから韻律記号付き音素列を抽出する
     if additional_symbols:
-        symbols = "|".join([r"\b" + re.escape(s) + r"\b" for s in additional_symbols2])
+        symbols = "|".join([r"\b" + re.escape(s) + r"\b" for s in additional_symbols])
         symbols_pattern = f"({symbols})"
         symbols_pattern = re.compile(symbols_pattern)
     else:
