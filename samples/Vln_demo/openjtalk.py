@@ -56,8 +56,10 @@ extra_symbols = [
     "#",  # アクセント句境界
     "[",  # ピッチの上がり位置
     "]",  # ピッチの下がり位置
-    
-    '''
+]
+
+
+additional_symbols = [
     '_',
 
     'C1', 'C#1', 'D1', 'D#1', 'E1', 'F1', 'F#1', 'G1', 'G#1', 'A1', 'A#1', 'B1',
@@ -112,7 +114,6 @@ extra_symbols = [
 
     'text', 'lyric', 'tempo', 'direction', 'annotation', 'rehearsal mark', 'dynamic mark', 'tempo mark', 'expression', 'articulation',
     'segno', 'coda', 'D.C.', 'D.S.', 'fine', 'To Coda', 'To Fine', 'To Segno', 'Da Capo', 'Dal Segno', 'Dal Segno al Coda', 'Da Capo al Fine', 'Da Capo al Segno', 'Da Capo al Coda',
-    '''
 ]
 
 _pad = "~"
@@ -123,11 +124,16 @@ symbols = [_pad] + extra_symbols + phonemes
 _symbol_to_id = {s: i for i, s in enumerate(symbols)}
 _id_to_symbol = {i: s for i, s in enumerate(symbols)}
 
+
 def numeric_feature_by_regex(regex, s):
     match = re.search(regex, s)
     if match is None:
+        print(f"No match found for regex {regex} in string {s}")
         return -50
-    return int(match.group(1))
+    else:
+        print(f"Match found for regex {regex}: {match.group(0)}")
+        return int(match.group(1))
+
 
 def pp_symbols(labels, drop_unvoiced_vowels=True):
     """Extract phoneme + prosoody symbol sequence from input full-context labels
