@@ -139,89 +139,48 @@ def numeric_feature_by_regex(regex, s):
         return int(match.group(1))
 
 
-def pp_symbols(labels, drop_unvoiced_vowels=True):
-    """Extract phoneme + prosoody symbol sequence from input full-context labels
+import re
 
-    The algorithm is based on [Kurihara 2021] [1]_ with some tweaks.
+def pp_symbols(labels, drop_unvoiced_vowels=True):
+    """入力のフルコンテキストラベルから音素と韻律記号を抽出します。
 
     Args:
-        labels (HTSLabelFile): List of labels
-        drop_unvoiced_vowels (bool): Drop unvoiced vowels. Defaults to True.
+        labels (str): フルコンテキストラベル
+        drop_unvoiced_vowels (bool): 無声母音を無視するかどうか。デフォルトはTrueです。
 
     Returns:
-        list: List of phoneme + prosody symbols
-
-    .. ipython::
-
-        In [11]: import ttslearn
-
-        In [12]: from nnmnkwii.io import hts
-
-        In [13]: from ttslearn.tacotron.frontend.openjtalk import pp_symbols
-
-        In [14]: labels = hts.load(ttslearn.util.example_label_file())
-
-        In [15]: " ".join(pp_symbols(labels.contexts))
-        Out[15]: '^ m i [ z u o # m a [ r e ] e sh i a k a r a ... $'
-
-    .. [1] K. Kurihara, N. Seiyama, and T. Kumano, “Prosodic features control by
-        symbols as input of sequence-to-sequence acoustic modeling for neural tts,”
-        IEICE Transactions on Information and Systems, vol. E104.D, no. 2,
-        pp. 302–311, 2021.
+        list: 音素と韻律記号のシンボルのリスト
     """
-    PP = []
-    N = len(labels)
+    # 音素と韻律記号のシンボルを格納するためのリストを定義します
+    pp_symbols_list = []
 
-    # 各音素毎に順番に処理
-    for n in range(N):
-        lab_curr = labels[n]
+    # 入力のラベルを音素セグメントに分割します
+    phoneme_segments = labels.split()
 
-        # 当該音素
-        p3 = re.search(r"\-(.*?)\+", lab_curr).group(1)  # type: ignore
+    # 各音素セグメントを処理します
+    for phoneme_segment in phoneme_segments:
+        # 音素を抽出します
+        phoneme = re.search(r"\-(.*?)\+", phoneme_segment).group(1)  # type: ignore
 
-        # 無声化母音を通常の母音として扱う
-        if drop_unvoiced_vowels and p3 in "AEIOU":
-            p3 = p3.lower()
+        # 無声母音を小文字に変換する場合は変換します
+        if drop_unvoiced_vowels and phoneme in "AEIOU":
+            phoneme = phoneme.lower()
 
-        # 先頭と末尾の sil のみ例外対応
-        if p3 == "sil":
-            assert n == 0 or n == N - 1
-            if n == 0:
-                PP.append("^")
-            elif n == N - 1:
-                # 疑問系かどうか
-                e3 = numeric_feature_by_regex(r"!(\d+)_", lab_curr)
-                if e3 == 0:
-                    PP.append("$")
-                elif e3 == 1:
-                    PP.append("?")
+        # silenceやpauseの特殊な場合を処理します
+        if phoneme == "sil":
+            # 最初か最後の音素かどうかをチェックします
+            if len(pp_symbols_list) == 0:
+                pp_symbols_list.append("^")  # 発話の開始
+            elif len(pp_symbols_list) == len(phoneme_segments) - 1:
+                pp_symbols_list.append("$")  # 発話の終了
             continue
-        elif p3 == "pau":
-            PP.append("_")
+        elif phoneme == "pau":
+            pp_symbols_list.append("_")  # ポーズ記号
             continue
         else:
-            PP.append(p3)
+            pp_symbols_list.append(phoneme)
 
-        # アクセント型および位置情報（前方または後方）
-        a1 = numeric_feature_by_regex(r"/A:([0-9\-]+)\+", lab_curr)
-        a2 = numeric_feature_by_regex(r"\+(\d+)\+", lab_curr)
-        a3 = numeric_feature_by_regex(r"\+(\d+)/", lab_curr)
-        # アクセント句におけるモーラ数
-        f1 = numeric_feature_by_regex(r"/F:(\d+)_", lab_curr)
-
-        a2_next = numeric_feature_by_regex(r"\+(\d+)\+", labels[n + 1])
-
-        # アクセント句境界
-        if a3 == 1 and a2_next == 1 and p3 in "aeiouAEIOUNcl":
-            PP.append("#")
-        # ピッチの立ち下がり（アクセント核）
-        elif a1 == 0 and a2_next == a2 + 1 and a2 != f1:
-            PP.append("]")
-        # ピッチの立ち上がり
-        elif a2 == 1 and a2_next == 2:
-            PP.append("[")
-
-    return PP
+    return pp_symbols_list
 
 def num_vocab():
     """Get number of vocabraries
