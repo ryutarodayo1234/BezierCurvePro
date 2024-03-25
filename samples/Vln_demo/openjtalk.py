@@ -130,36 +130,14 @@ additional_symbols = [
     'segno', 'coda', 'D.C.', 'D.S.', 'fine', 'To Coda', 'To Fine', 'To Segno', 'Da Capo', 'Dal Segno', 'Dal Segno al Coda', 'Da Capo al Fine', 'Da Capo al Segno', 'Da Capo al Coda',
 ]
 
-def pp_symbols(labels, drop_unvoiced_vowels=True):
-    """Extract phoneme + prosoody symbol sequence from input full-context labels
-
-    The algorithm is based on [Kurihara 2021] [1]_ with some tweaks.
-
-    Args:
-        labels (HTSLabelFile): List of labels
-        drop_unvoiced_vowels (bool): Drop unvoiced vowels. Defaults to True.
-
-    Returns:
-        list: List of phoneme + prosody symbols
-
-    .. ipython::
-
-        In [11]: import ttslearn
-
-        In [12]: from nnmnkwii.io import hts
-
-        In [13]: from ttslearn.tacotron.frontend.openjtalk import pp_symbols
-
-        In [14]: labels = hts.load(ttslearn.util.example_label_file())
-
-        In [15]: " ".join(pp_symbols(labels.contexts))
-        Out[15]: '^ m i [ z u o # m a [ r e ] e sh i a k a r a ... $'
-
-    .. [1] K. Kurihara, N. Seiyama, and T. Kumano, “Prosodic features control by
-        symbols as input of sequence-to-sequence acoustic modeling for neural tts,”
-        IEICE Transactions on Information and Systems, vol. E104.D, no. 2,
-        pp. 302–311, 2021.
-    """
+def pp_symbols(labels, additional_symbols=None):
+    # OpenJTalkラベルから韻律記号付き音素列を抽出する
+    if additional_symbols:
+        symbols = "|".join(map(re.escape, additional_symbols))
+        symbols_pattern = re.compile(f"({'|'.join(map(re.escape, additional_symbols))})")
+    else:
+        symbols_pattern = re.compile(r"\[.*?\]")
+        
     PP = []
     N = len(labels)
 
@@ -169,29 +147,6 @@ def pp_symbols(labels, drop_unvoiced_vowels=True):
 
         # 当該音素
         p3 = re.search(r"\-(.*?)\+", lab_curr).group(1)  # type: ignore
-
-        # 無声化母音を通常の母音として扱う
-        if drop_unvoiced_vowels and p3 in "AEIOU":
-            p3 = p3.lower()
-
-        # 先頭と末尾の sil のみ例外対応
-        if p3 == "sil":
-            assert n == 0 or n == N - 1
-            if n == 0:
-                PP.append("^")
-            elif n == N - 1:
-                # 疑問系かどうか
-                e3 = numeric_feature_by_regex(r"!(\d+)_", lab_curr)
-                if e3 == 0:
-                    PP.append("$")
-                elif e3 == 1:
-                    PP.append("?")
-            continue
-        elif p3 == "pau":
-            PP.append("_")
-            continue
-        else:
-            PP.append(p3)
 
         # アクセント型および位置情報（前方または後方）
         a1 = numeric_feature_by_regex(r"/A:([0-9\-]+)\+", lab_curr)
