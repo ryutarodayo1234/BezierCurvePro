@@ -153,9 +153,10 @@ if __name__ == "__main__":
     wav_files = [Path(args.wav_root) / f"{utt_id}.wav" for utt_id in utt_ids]
     lab_files = [Path(args.lab_root) / f"{utt_id}.lab" for utt_id in utt_ids]
 
-    in_dir = Path(args.out_dir) / "in_tacotron"
-    out_dir = Path(args.out_dir) / "out_tacotron"
-    wave_dir = Path(args.out_dir) / "out_wavenet"
+    in_dir = Path("/content/recipes/tacotron/dump/jsut_sr16000/org/train") / "in_tacotron"
+    out_dir = Path("/content/recipes/tacotron/dump/jsut_sr16000/org/train") / "out_tacotron"
+    wave_dir = Path("/content/recipes/tacotron/dump/jsut_sr16000/org/train") / "out_wavenet"
+
     in_dir.mkdir(parents=True, exist_ok=True)
     out_dir.mkdir(parents=True, exist_ok=True)
     wave_dir.mkdir(parents=True, exist_ok=True)
