@@ -57,6 +57,7 @@ extra_symbols = [
     "[",  # ピッチの上がり位置
     "]",  # ピッチの下がり位置
     
+    '''
     '_',
 
     'C1', 'C#1', 'D1', 'D#1', 'E1', 'F1', 'F#1', 'G1', 'G#1', 'A1', 'A#1', 'B1',
@@ -111,6 +112,7 @@ extra_symbols = [
 
     'text', 'lyric', 'tempo', 'direction', 'annotation', 'rehearsal mark', 'dynamic mark', 'tempo mark', 'expression', 'articulation',
     'segno', 'coda', 'D.C.', 'D.S.', 'fine', 'To Coda', 'To Fine', 'To Segno', 'Da Capo', 'Dal Segno', 'Dal Segno al Coda', 'Da Capo al Fine', 'Da Capo al Segno', 'Da Capo al Coda',
+    '''
 ]
 
 _pad = "~"
