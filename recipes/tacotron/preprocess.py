@@ -9,10 +9,6 @@ from nnmnkwii.io import hts
 from nnmnkwii.preprocessing import mulaw_quantize
 from scipy.io import wavfile
 from tqdm import tqdm
-import os
-import glob
-from ttslearn.tacotron.frontend.openjtalk import pp_symbols, text_to_sequence
-
 
 import requests
 
@@ -59,6 +55,10 @@ def preprocess(
 ):
     # デバッグ用ログ
     print("Starting preprocess for:", os.path.basename(lab_file))
+
+    import os
+    import glob
+    from ttslearn.tacotron.frontend.openjtalk import pp_symbols, text_to_sequence
 
     # ラベルファイルのルートディレクトリ
     lab_root = "downloads/lab_files"
@@ -114,7 +114,7 @@ def preprocess(
         x = x[int(start_frame * 0.0125 * sr) :]
         length = int(sr * 0.0125) * out_feats.shape[0]
         x = pad_1d(x, length) if len(x) < length else x[:length]
-        
+
         # 特徴量のアップサンプリングを行う都合上、音声波形の長さはフレームシフトで割り切れる必要があります
         assert len(x) % int(sr * 0.0125) == 0
 
@@ -127,17 +127,10 @@ def preprocess(
         # デバッグ用ログ
         print("Saving files for:", utt_id)
 
-        np.save(in_dir / f"{utt_id}-feats.npy", in_feats, allow_pickle=False)
-        np.save(
-            out_dir / f"{utt_id}-feats.npy",
-            out_feats.astype(np.float32),
-            allow_pickle=False,
-        )
-        np.save(
-            wave_dir / f"{utt_id}-feats.npy",
-            x.astype(np.int64),
-            allow_pickle=False,
-        )
+        np.save(in_dir / "in_tacotron" / f"{utt_id}-feats.npy", in_feats, allow_pickle=False)
+        np.save(out_dir / "out_tacotron" / f"{utt_id}-feats.npy", out_feats.astype(np.float32), allow_pickle=False)
+        np.save(wave_dir / "out_wavenet" / f"{utt_id}-feats.npy", x.astype(np.int64), allow_pickle=False)
+
         # デバッグ用ログ
         print("Preprocessing completed.")
 
@@ -173,4 +166,5 @@ if __name__ == "__main__":
             for wav_file, lab_file in zip(wav_files, lab_files)
         ]
         for future in tqdm(futures):
-            future.result() 
+            future.result()
+            
