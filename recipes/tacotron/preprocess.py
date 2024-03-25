@@ -80,9 +80,6 @@ def preprocess(
         with open(lab_file, 'r') as f:
             labels = f.read()
 
-        # デバッグ用ログ
-        print("Labels:", labels)
-
         # 韻律記号付き音素列の抽出
         PP = pp_symbols(labels)
         in_feats = np.array(text_to_sequence(PP), dtype=np.int64)
@@ -96,10 +93,6 @@ def preprocess(
         x = librosa.resample(y=x, orig_sr=_sr, target_sr=sr)
         out_feats = logmelspectrogram(x, sr)
 
-        # デバッグ用ログ
-        print("Out feats shape:", out_feats.shape)
-
-        """
         # 冒頭と末尾の非音声区間の長さを調整
         assert "sil" in labels.contexts[0] and "sil" in labels.contexts[-1]
         start_frame = int(labels.start_times[1] / 125000)
@@ -115,7 +108,6 @@ def preprocess(
         x = x[int(start_frame * 0.0125 * sr) :]
         length = int(sr * 0.0125) * out_feats.shape[0]
         x = pad_1d(x, length) if len(x) < length else x[:length]
-        """
         
         # 特徴量のアップサンプリングを行う都合上、音声波形の長さはフレームシフトで割り切れる必要があります
         assert len(x) % int(sr * 0.0125) == 0
@@ -125,9 +117,6 @@ def preprocess(
 
         # save to files
         utt_id = lab_file.stem
-
-        # デバッグ用ログ
-        print("Saving files for:", utt_id)
 
         np.save(in_dir / f"{utt_id}-feats.npy", in_feats, allow_pickle=False)
         np.save(
@@ -140,8 +129,6 @@ def preprocess(
             x.astype(np.int64),
             allow_pickle=False,
         )
-        # デバッグ用ログ
-        print("Preprocessing completed.")
 
 
 
