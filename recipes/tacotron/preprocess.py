@@ -9,6 +9,7 @@ from nnmnkwii.io import hts
 from nnmnkwii.preprocessing import mulaw_quantize
 from scipy.io import wavfile
 from tqdm import tqdm
+import os
 
 import requests
 
@@ -55,8 +56,6 @@ def preprocess(
 ):
     # デバッグ用ログ
     print("Starting preprocess for:", os.path.basename(lab_file))
-
-    import os
     import glob
     from ttslearn.tacotron.frontend.openjtalk import pp_symbols, text_to_sequence
 
@@ -166,5 +165,4 @@ if __name__ == "__main__":
             for wav_file, lab_file in zip(wav_files, lab_files)
         ]
         for future in tqdm(futures):
-            future.result()
-            
+            future.result() 
