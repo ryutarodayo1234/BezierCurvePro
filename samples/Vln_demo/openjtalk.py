@@ -48,29 +48,12 @@ phonemes = [
     "sil",
 ]
 
-_pad = "~"
-
-# NOTE: 0 をパディングを表す数値とする
-symbols = [_pad] + extra_symbols + phonemes
-
-_symbol_to_id = {s: i for i, s in enumerate(symbols)}
-_id_to_symbol = {i: s for i, s in enumerate(symbols)}
-
-
-def numeric_feature_by_regex(regex, s):
-    match = re.search(regex, s)
-    if match is None:
-        print(f"No match found for regex {regex} in string {s}")
-        return -50
-    else:
-        print(f"Match found for regex {regex}: {match.group(0)}")
-        return int(match.group(1))
-
-
 extra_symbols = [
     "^",  # 文の先頭を表す特殊記号 <SOS>
     "$",  # 文の末尾を表す特殊記号 <EOS> (通常)
     "?",  # 文の末尾を表す特殊記号 <EOS> (疑問系)
+    "_",  # ポーズ
+    "#",  # アクセント句境界
     "[",  # ピッチの上がり位置
     "]",  # ピッチの下がり位置
     
@@ -130,6 +113,19 @@ extra_symbols = [
     'segno', 'coda', 'D.C.', 'D.S.', 'fine', 'To Coda', 'To Fine', 'To Segno', 'Da Capo', 'Dal Segno', 'Dal Segno al Coda', 'Da Capo al Fine', 'Da Capo al Segno', 'Da Capo al Coda',
 ]
 
+_pad = "~"
+
+# NOTE: 0 をパディングを表す数値とする
+symbols = [_pad] + extra_symbols + phonemes
+
+_symbol_to_id = {s: i for i, s in enumerate(symbols)}
+_id_to_symbol = {i: s for i, s in enumerate(symbols)}
+
+def numeric_feature_by_regex(regex, s):
+    match = re.search(regex, s)
+    if match is None:
+        return -50
+    return int(match.group(1))
 
 def pp_symbols(labels, drop_unvoiced_vowels=True):
     """Extract phoneme + prosoody symbol sequence from input full-context labels
