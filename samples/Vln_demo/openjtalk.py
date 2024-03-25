@@ -70,8 +70,12 @@ _id_to_symbol = {i: s for i, s in enumerate(symbols)}
 def numeric_feature_by_regex(regex, s):
     match = re.search(regex, s)
     if match is None:
+        print(f"No match found for regex {regex} in string {s}")
         return -50
-    return int(match.group(1))
+    else:
+        print(f"Match found for regex {regex}: {match.group(0)}")
+        return int(match.group(1))
+
 
 additional_symbols = [
     '_',
@@ -130,70 +134,25 @@ additional_symbols = [
     'segno', 'coda', 'D.C.', 'D.S.', 'fine', 'To Coda', 'To Fine', 'To Segno', 'Da Capo', 'Dal Segno', 'Dal Segno al Coda', 'Da Capo al Fine', 'Da Capo al Segno', 'Da Capo al Coda',
 ]
 
-extra_symbols += additional_symbols
-
-def pp_symbols(labels, drop_unvoiced_vowels=True):
-    """Extract phoneme + prosoody symbol sequence from input full-context labels
-
-    The algorithm is based on [Kurihara 2021] [1]_ with some tweaks.
-
-    Args:
-        labels (HTSLabelFile): List of labels
-        drop_unvoiced_vowels (bool): Drop unvoiced vowels. Defaults to True.
-
-    Returns:
-        list: List of phoneme + prosody symbols
-
-    .. ipython::
-
-        In [11]: import ttslearn
-
-        In [12]: from nnmnkwii.io import hts
-
-        In [13]: from ttslearn.tacotron.frontend.openjtalk import pp_symbols
-
-        In [14]: labels = hts.load(ttslearn.util.example_label_file())
-
-        In [15]: " ".join(pp_symbols(labels.contexts))
-        Out[15]: '^ m i [ z u o # m a [ r e ] e sh i a k a r a ... $'
-
-    .. [1] K. Kurihara, N. Seiyama, and T. Kumano, “Prosodic features control by
-        symbols as input of sequence-to-sequence acoustic modeling for neural tts,”
-        IEICE Transactions on Information and Systems, vol. E104.D, no. 2,
-        pp. 302–311, 2021.
-    """
+def pp_symbols(lab_file, additional_symbols=None):
+    # OpenJTalkラベルから韻律記号付き音素列を抽出する
+    if additional_symbols:
+        # 追加のシンボルがある場合は、正規表現パターンに追加する
+        symbols = "|".join([r"\b" + re.escape(s) + r"\b" for s in additional_symbols])
+        symbols_pattern = f"({symbols})"
+        symbols_pattern = re.compile(symbols_pattern)
+    else:
+        symbols_pattern = re.compile(r"\[.*?\]")
+        
     PP = []
-    N = len(labels)
+    N = len(lab_file)
 
     # 各音素毎に順番に処理
     for n in range(N):
-        lab_curr = labels[n]
+        lab_curr = lab_file[n]
 
         # 当該音素
         p3 = re.search(r"\-(.*?)\+", lab_curr).group(1)  # type: ignore
-
-        # 無声化母音を通常の母音として扱う
-        if drop_unvoiced_vowels and p3 in "AEIOU":
-            p3 = p3.lower()
-
-        # 先頭と末尾の sil のみ例外対応
-        if p3 == "sil":
-            assert n == 0 or n == N - 1
-            if n == 0:
-                PP.append("^")
-            elif n == N - 1:
-                # 疑問系かどうか
-                e3 = numeric_feature_by_regex(r"!(\d+)_", lab_curr)
-                if e3 == 0:
-                    PP.append("$")
-                elif e3 == 1:
-                    PP.append("?")
-            continue
-        elif p3 == "pau":
-            PP.append("_")
-            continue
-        else:
-            PP.append(p3)
 
         # アクセント型および位置情報（前方または後方）
         a1 = numeric_feature_by_regex(r"/A:([0-9\-]+)\+", lab_curr)
@@ -202,7 +161,7 @@ def pp_symbols(labels, drop_unvoiced_vowels=True):
         # アクセント句におけるモーラ数
         f1 = numeric_feature_by_regex(r"/F:(\d+)_", lab_curr)
 
-        a2_next = numeric_feature_by_regex(r"\+(\d+)\+", labels[n + 1])
+        a2_next = numeric_feature_by_regex(r"\+(\d+)\+", lab_file[n + 1])
 
         # アクセント句境界
         if a3 == 1 and a2_next == 1 and p3 in "aeiouAEIOUNcl":
@@ -215,54 +174,3 @@ def pp_symbols(labels, drop_unvoiced_vowels=True):
             PP.append("[")
 
     return PP
-
-
-def num_vocab():
-    """Get number of vocabraries
-
-    Returns:
-        int: Number of vocabraries
-
-    Examples:
-
-        >>> from ttslearn.tacotron.frontend.openjtalk import num_vocab
-        >>> num_vocab()
-        >>> 52
-    """
-    return len(symbols)
-
-
-def text_to_sequence(text):
-    """Convert phoneme + prosody symbols to sequence of numbers
-
-    Args:
-        text (list): text as a list of phoneme + prosody symbols
-
-    Returns:
-        list: List of numbers
-
-    Examples:
-
-        >>> from ttslearn.tacotron.frontend.openjtalk import text_to_sequence
-        >>> text_to_sequence(["^", "m", "i", "[", "z","o", "$"])
-        >>> [1, 31, 27, 6, 49, 35, 2]
-    """
-    return [_symbol_to_id[s] for s in text]
-
-
-def sequence_to_text(seq):
-    """Convert sequence of numbers to phoneme + prosody symbols
-
-    Args:
-        seq (list): Input sequence of numbers
-
-    Returns:
-        list: List of phoneme + prosody symbols
-
-    Examples:
-
-        >>> from ttslearn.tacotron.frontend.openjtalk import sequence_to_text
-        >>> sequence_to_text([1, 31, 27, 6, 49, 35, 2])
-        >>> ['^', 'm', 'i', '[', 'z', 'o', '$']
-    """
-    return [_id_to_symbol[s] for s in seq]
