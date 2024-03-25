@@ -10,6 +10,9 @@ from nnmnkwii.preprocessing import mulaw_quantize
 from scipy.io import wavfile
 from tqdm import tqdm
 import os
+import glob
+from ttslearn.tacotron.frontend.openjtalk import pp_symbols, text_to_sequence
+
 
 import requests
 
@@ -54,11 +57,10 @@ def preprocess(
     out_dir,
     wave_dir,
 ):
+
     # デバッグ用ログ
     print("Starting preprocess for:", os.path.basename(lab_file))
-    import glob
-    from ttslearn.tacotron.frontend.openjtalk import pp_symbols, text_to_sequence
-
+    
     # ラベルファイルのルートディレクトリ
     lab_root = "downloads/lab_files"
 
@@ -122,13 +124,17 @@ def preprocess(
 
         # save to files
         utt_id = lab_file.stem
-
-        # デバッグ用ログ
-        print("Saving files for:", utt_id)
-
-        np.save(in_dir / "in_tacotron" / f"{utt_id}-feats.npy", in_feats, allow_pickle=False)
-        np.save(out_dir / "out_tacotron" / f"{utt_id}-feats.npy", out_feats.astype(np.float32), allow_pickle=False)
-        np.save(wave_dir / "out_wavenet" / f"{utt_id}-feats.npy", x.astype(np.int64), allow_pickle=False)
+        np.save(in_dir / f"{utt_id}-feats.npy", in_feats, allow_pickle=False)
+        np.save(
+            out_dir / f"{utt_id}-feats.npy",
+            out_feats.astype(np.float32),
+            allow_pickle=False,
+        )
+        np.save(
+            wave_dir / f"{utt_id}-feats.npy",
+            x.astype(np.int64),
+            allow_pickle=False,
+        )
 
         # デバッグ用ログ
         print("Preprocessing completed.")
