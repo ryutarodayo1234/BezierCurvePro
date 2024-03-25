@@ -11,8 +11,6 @@ from scipy.io import wavfile
 from tqdm import tqdm
 import os
 import glob
-from ttslearn.tacotron.frontend.openjtalk import pp_symbols, text_to_sequence
-
 
 import requests
 
@@ -55,6 +53,8 @@ def preprocess(
     out_dir,
     wave_dir,
 ):
+    
+    from ttslearn.tacotron.frontend.openjtalk import pp_symbols, text_to_sequence
 
     assert wav_file.stem == lab_file.stem
     labels = hts.load(lab_file)
