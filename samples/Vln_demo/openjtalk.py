@@ -134,7 +134,7 @@ additional_symbols = [
     'segno', 'coda', 'D.C.', 'D.S.', 'fine', 'To Coda', 'To Fine', 'To Segno', 'Da Capo', 'Dal Segno', 'Dal Segno al Coda', 'Da Capo al Fine', 'Da Capo al Segno', 'Da Capo al Coda',
 ]
 
-def pp_symbols(lab_file, additional_symbols=None):
+def pp_symbols(labels, additional_symbols=None):
     # OpenJTalkラベルから韻律記号付き音素列を抽出する
     if additional_symbols:
         # 追加のシンボルがある場合は、正規表現パターンに追加する
@@ -145,11 +145,11 @@ def pp_symbols(lab_file, additional_symbols=None):
         symbols_pattern = re.compile(r"\[.*?\]")
         
     PP = []
-    N = len(lab_file)
+    N = len(labels)
 
     # 各音素毎に順番に処理
     for n in range(N):
-        lab_curr = lab_file[n]
+        lab_curr = labels[n]
 
         # 当該音素
         p3 = re.search(r"\-(.*?)\+", lab_curr).group(1)  # type: ignore
@@ -161,7 +161,7 @@ def pp_symbols(lab_file, additional_symbols=None):
         # アクセント句におけるモーラ数
         f1 = numeric_feature_by_regex(r"/F:(\d+)_", lab_curr)
 
-        a2_next = numeric_feature_by_regex(r"\+(\d+)\+", lab_file[n + 1])
+        a2_next = numeric_feature_by_regex(r"\+(\d+)\+", labels[n + 1])
 
         # アクセント句境界
         if a3 == 1 and a2_next == 1 and p3 in "aeiouAEIOUNcl":
