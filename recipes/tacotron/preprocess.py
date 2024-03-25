@@ -69,22 +69,6 @@ def preprocess(
     x = librosa.resample(y=x, orig_sr=_sr, target_sr=sr)
     out_feats = logmelspectrogram(x, sr)
 
-    # 冒頭と末尾の非音声区間の長さを調整
-    assert "sil" in labels.contexts[0] and "sil" in labels.contexts[-1]
-    start_frame = int(labels.start_times[1] / 125000)
-    end_frame = int(labels.end_times[-2] / 125000)
-
-    # 冒頭： 50 ミリ秒、末尾： 100 ミリ秒
-    start_frame = max(0, start_frame - int(0.050 / 0.0125))
-    end_frame = min(len(out_feats), end_frame + int(0.100 / 0.0125))
-
-    out_feats = out_feats[start_frame:end_frame]
-
-    # 時間領域で音声の長さを調整
-    x = x[int(start_frame * 0.0125 * sr) :]
-    length = int(sr * 0.0125) * out_feats.shape[0]
-    x = pad_1d(x, length) if len(x) < length else x[:length]
-
     # 特徴量のアップサンプリングを行う都合上、音声波形の長さはフレームシフトで割り切れる必要があります
     assert len(x) % int(sr * 0.0125) == 0
 
