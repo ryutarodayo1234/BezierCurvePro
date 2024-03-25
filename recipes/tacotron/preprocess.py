@@ -129,17 +129,18 @@ def preprocess(
         # デバッグ用ログ
         print("Saving files for:", utt_id)
 
-        np.save(in_dir / f"{utt_id}-feats.npy", in_feats, allow_pickle=False)
+        np.save(str(in_dir / f"{utt_id}-feats.npy"), in_feats, allow_pickle=False)
         np.save(
-            out_dir / f"{utt_id}-feats.npy",
+            str(out_dir / f"{utt_id}-feats.npy"),
             out_feats.astype(np.float32),
             allow_pickle=False,
         )
         np.save(
-            wave_dir / f"{utt_id}-feats.npy",
+            str(wave_dir / f"{utt_id}-feats.npy"),
             x.astype(np.int64),
             allow_pickle=False,
         )
+
         # デバッグ用ログ
         print("Preprocessing completed.")
 
