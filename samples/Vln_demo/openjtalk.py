@@ -133,8 +133,7 @@ additional_symbols2 = [
 def pp_symbols(labels, additional_symbols=None):
     # OpenJTalkラベルから韻律記号付き音素列を抽出する
     if additional_symbols:
-        symbols = "|".join([r"\b" + re.escape(s) + r"\b" for s in additional_symbols])
-        symbols += "|".join([r"\b" + re.escape(s) + r"\b" for s in additional_symbols2])
+        symbols = additional_symbols2
         symbols_pattern = f"({symbols})"
         symbols_pattern = re.compile(symbols_pattern)
     else:
