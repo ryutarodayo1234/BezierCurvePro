@@ -174,3 +174,53 @@ def pp_symbols(lab_file, additional_symbols=None):
             PP.append("[")
 
     return PP
+
+def num_vocab():
+    """Get number of vocabraries
+
+    Returns:
+        int: Number of vocabraries
+
+    Examples:
+
+        >>> from ttslearn.tacotron.frontend.openjtalk import num_vocab
+        >>> num_vocab()
+        >>> 52
+    """
+    return len(symbols)
+
+
+def text_to_sequence(text):
+    """Convert phoneme + prosody symbols to sequence of numbers
+
+    Args:
+        text (list): text as a list of phoneme + prosody symbols
+
+    Returns:
+        list: List of numbers
+
+    Examples:
+
+        >>> from ttslearn.tacotron.frontend.openjtalk import text_to_sequence
+        >>> text_to_sequence(["^", "m", "i", "[", "z","o", "$"])
+        >>> [1, 31, 27, 6, 49, 35, 2]
+    """
+    return [_symbol_to_id[s] for s in text]
+
+
+def sequence_to_text(seq):
+    """Convert sequence of numbers to phoneme + prosody symbols
+
+    Args:
+        seq (list): Input sequence of numbers
+
+    Returns:
+        list: List of phoneme + prosody symbols
+
+    Examples:
+
+        >>> from ttslearn.tacotron.frontend.openjtalk import sequence_to_text
+        >>> sequence_to_text([1, 31, 27, 6, 49, 35, 2])
+        >>> ['^', 'm', 'i', '[', 'z', 'o', '$']
+    """
+    return [_id_to_symbol[s] for s in seq]

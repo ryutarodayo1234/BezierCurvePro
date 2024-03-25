@@ -10,6 +10,9 @@ from nnmnkwii.preprocessing import mulaw_quantize
 from scipy.io import wavfile
 from tqdm import tqdm
 import os
+import glob
+from ttslearn.tacotron.frontend.openjtalk import pp_symbols, text_to_sequence
+
 
 import requests
 
@@ -56,8 +59,6 @@ def preprocess(
 ):
     # デバッグ用ログ
     print("Starting preprocess for:", os.path.basename(lab_file))
-    import glob
-    from ttslearn.tacotron.frontend.openjtalk import pp_symbols, text_to_sequence
 
     # ラベルファイルのルートディレクトリ
     lab_root = "downloads/lab_files"
