@@ -24,6 +24,8 @@ if response.status_code == 200:
 import dsp
 from dsp import mulaw_quantize, logmelspectrogram
 
+import os
+import glob
 
 from ttslearn.tacotron.frontend.openjtalk import pp_symbols, text_to_sequence
 from ttslearn.util import pad_1d
@@ -53,10 +55,6 @@ def preprocess(
     out_dir,
     wave_dir,
 ):
-
-    import os
-    import glob
-    from ttslearn.tacotron.frontend.openjtalk import pp_symbols, text_to_sequence
 
     # ラベルファイルのルートディレクトリ
     lab_root = "downloads/lab_files"
