@@ -121,7 +121,11 @@ def preprocess(
             allow_pickle=False,
         )
         # デバッグ用ログ
+        print("Labels:", labels)
+        print("Out feats shape:", out_feats.shape)
+        print("Saving files for:", utt_id)
         print("Preprocessing completed.")
+
 
 if __name__ == "__main__":
     args = get_parser().parse_args(sys.argv[1:])
