@@ -53,8 +53,6 @@ def preprocess(
     out_dir,
     wave_dir,
 ):
-    # デバッグ用ログ
-    print("Starting preprocess for:", os.path.basename(lab_file))
 
     import os
     import glob
@@ -80,9 +78,6 @@ def preprocess(
         with open(lab_file, 'r') as f:
             labels = f.read()
 
-        # デバッグ用ログ
-        print("Labels:", labels)
-
         # 韻律記号付き音素列の抽出
         PP = pp_symbols(labels)
         in_feats = np.array(text_to_sequence(PP), dtype=np.int64)
@@ -95,9 +90,6 @@ def preprocess(
             x = (x / np.iinfo(x.dtype).max).astype(np.float64)
         x = librosa.resample(y=x, orig_sr=_sr, target_sr=sr)
         out_feats = logmelspectrogram(x, sr)
-
-        # デバッグ用ログ
-        print("Out feats shape:", out_feats.shape)
 
         # 冒頭と末尾の非音声区間の長さを調整
         assert "sil" in labels.contexts[0] and "sil" in labels.contexts[-1]
@@ -124,15 +116,9 @@ def preprocess(
         # save to files
         utt_id = lab_file.stem
 
-        # デバッグ用ログ
-        print("Saving files for:", utt_id)
-
         np.save(in_dir / "in_tacotron" / f"{utt_id}-feats.npy", in_feats, allow_pickle=False)
         np.save(out_dir / "out_tacotron" / f"{utt_id}-feats.npy", out_feats.astype(np.float32), allow_pickle=False)
         np.save(wave_dir / "out_wavenet" / f"{utt_id}-feats.npy", x.astype(np.int64), allow_pickle=False)
-
-        # デバッグ用ログ
-        print("Preprocessing completed.")
 
 
 
