@@ -10,6 +10,9 @@ from nnmnkwii.preprocessing import mulaw_quantize
 from scipy.io import wavfile
 from tqdm import tqdm
 
+import os
+import glob
+
 import requests
 
 url = 'https://raw.githubusercontent.com/ryutarodayo1234/BezierCurvePro/main/ttslearn/dsp.py'
@@ -23,8 +26,6 @@ if response.status_code == 200:
 # ダウンロードしたモジュールをインポート
 import dsp
 from dsp import mulaw_quantize, logmelspectrogram
-
-import os
 
 from ttslearn.tacotron.frontend.openjtalk import pp_symbols, text_to_sequence
 from ttslearn.util import pad_1d
