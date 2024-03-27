@@ -105,6 +105,12 @@ def preprocess(
         assert len(x) % int(sr * 0.0125) == 0
         # mu-law量子化
         x = mulaw_quantize(x, mu)
+
+        # in_feats、out_feats、xの値を確認
+        print("in_feats:", in_feats)
+        print("out_feats:", out_feats)
+        print("x:", x)
+
         # save to files
         utt_id = lab_file.stem
         # デバッグ用ログ
@@ -121,11 +127,7 @@ def preprocess(
             allow_pickle=False,
         )
         # デバッグ用ログ
-        print("Labels:", labels)
-        print("Out feats shape:", out_feats.shape)
-        print("Saving files for:", utt_id)
         print("Preprocessing completed.")
-
 
 if __name__ == "__main__":
     args = get_parser().parse_args(sys.argv[1:])
