@@ -78,9 +78,9 @@ def preprocess(
     # デバッグ用ログ
     print("Starting preprocess for:", os.path.basename(lab_file))
     # ラベルファイルのルートディレクトリ
-    lab_root = "downloads/lab_files"
+    lab_root = "/content/recipes/tacotron/downloads/lab_files"
     # wavファイルのルートディレクトリ
-    wav_root = "downloads/corpus_files"
+    wav_root = "/content/recipes/tacotron/downloads/corpus_files"
     # ラベルファイルのリストを取得
     label_files = glob.glob(os.path.join(lab_root, "files*"))
     
