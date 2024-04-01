@@ -74,9 +74,26 @@ def preprocess(
             labels = f.read()
         # デバッグ用ログ
         print("Labels:", labels)
+
+        # 音符の場合
+        if pitch != 'rest':
+            # 音符の特徴量を生成
+            duration_map = {'Whole': 4, 'Half': 2, 'Quarter': 1, 'Eighth': 0.5, '16th': 0.25}
+            duration_value = duration_map[duration]
+            in_feats.append((start_time, end_time, pitch, duration_value))
+        # 休符の場合
+        else:
+            # 休符の特徴量を生成
+            duration_map = {'Whole': 4, 'Half': 2, 'Quarter': 1, 'Eighth': 0.5, '16th': 0.25}
+            duration_value = duration_map[duration]
+            in_feats.append((start_time, end_time, 'sil', duration_value))
+
+        print(feat)
+        '''
         # 韻律記号付き音素列の抽出
         PP = pp_symbols(labels)
         in_feats = np.array(text_to_sequence(PP), dtype=np.int64)
+        '''
         # wavファイルを読み込む
         _sr, x = wavfile.read(wav_file)
         # メルスペクトログラムの計算
