@@ -45,18 +45,7 @@ def get_parser():
     parser.add_argument("--mu", type=int, default=256, help="mu")
     return parser
 
-
-def preprocess(
-    wav_file,
-    lab_file,
-    sr,
-    mu,
-    in_dir,
-    out_dir,
-    wave_dir,
-):
-    
-    def pitch_to_number(pitch):
+def pitch_to_number(pitch):
         # 各音名に対するピッチを定義
         pitch_map = {
             'C': 0,
@@ -75,6 +64,16 @@ def preprocess(
         # ピッチを数値に変換して返す
         note, octave = pitch[:-1], int(pitch[-1])
         return pitch_map[note] + octave * 12
+
+def preprocess(
+    wav_file,
+    lab_file,
+    sr,
+    mu,
+    in_dir,
+    out_dir,
+    wave_dir,
+):
     
     # デバッグ用ログ
     print("Starting preprocess for:", os.path.basename(lab_file))
