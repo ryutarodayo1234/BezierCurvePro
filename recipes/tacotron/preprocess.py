@@ -159,8 +159,8 @@ if __name__ == "__main__":
 
     with open(args.utt_list) as f:
         utt_ids = [utt_id.strip() for utt_id in f]
-    wav_file = [Path(args.wav_root) / f"{utt_id}.wav" for utt_id in utt_ids]
-    lab_file = [Path(args.lab_root) / f"{utt_id}.lab" for utt_id in utt_ids]
+    wav_files = [Path(args.wav_root) / f"{utt_id}.wav" for utt_id in utt_ids]
+    lab_files = [Path(args.lab_root) / f"{utt_id}.lab" for utt_id in utt_ids]
 
     in_dir = Path(args.out_dir) / "in_tacotron"
     out_dir = Path(args.out_dir) / "out_tacotron"
