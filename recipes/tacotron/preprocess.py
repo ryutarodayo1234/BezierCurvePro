@@ -55,7 +55,6 @@ def preprocess(
     out_dir,
     wave_dir,
 ):
-    
     # デバッグ用ログ
     print("Starting preprocess for:", os.path.basename(lab_file))
     # ラベルファイルのルートディレクトリ
@@ -64,6 +63,8 @@ def preprocess(
     wav_root = "downloads/corpus_files"
     # ラベルファイルのリストを取得
     label_files = glob.glob(os.path.join(lab_root, "files*"))
+    
+    # 各ラベルファイルに対して特徴量を計算
     for lab_file in label_files:
         # wavファイルのパスを取得
         wav_file = os.path.join(wav_root, os.path.basename(lab_file).replace(".lab", ".wav"))
@@ -71,13 +72,27 @@ def preprocess(
         assert os.path.splitext(wav_file)[0] == os.path.splitext(lab_file)[0]
         # ラベルファイルを読み込む
         with open(lab_file, 'r') as f:
-            labels = f.read()
-        # デバッグ用ログ
-        print("Labels:", labels)
+            labels = f.readlines()
         
-        # 韻律記号付き音素列の抽出
-        PP = pp_symbols(labels)
-        in_feats = np.array(text_to_sequence(PP), dtype=np.int64)
+        # 特徴量を格納するリスト
+        features = []
+        # 各行のラベル情報から特徴量を計算
+        for line in labels:
+            # 各行をタブで分割して情報を取得
+            start_time, end_time, pitch = line.strip().split('\t')
+            # 開始時間と終了時間をfloat型に変換
+            start_time = float(start_time)
+            end_time = float(end_time)
+            # 音符の長さを計算
+            duration = end_time - start_time
+            # ピッチ（音高）を数値に変換
+            pitch_value = pitch_to_number(pitch)  # この関数は実装してください
+            # 特徴量として開始時間、終了時間、ピッチ、音符の長さを追加
+            features.append([start_time, end_time, pitch_value, duration])
+        
+        # 特徴量のリストをNumPy配列に変換
+        in_feats = np.array(features, dtype=np.float32)
+
         # wavファイルを読み込む
         _sr, x = wavfile.read(wav_file)
         # メルスペクトログラムの計算
@@ -85,22 +100,6 @@ def preprocess(
             x = (x / np.iinfo(x.dtype).max).astype(np.float64)
         x = librosa.resample(y=x, orig_sr=_sr, target_sr=sr)
         out_feats = logmelspectrogram(x, sr)
-        # デバッグ用ログ
-        print("Out feats shape:", out_feats.shape)
-        """
-        # 冒頭と末尾の非音声区間の長さを調整
-        assert "sil" in labels.contexts[0] and "sil" in labels.contexts[-1]
-        start_frame = int(labels.start_times[1] / 125000)
-        end_frame = int(labels.end_times[-2] / 125000)
-        # 冒頭： 50 ミリ秒、末尾： 100 ミリ秒
-        start_frame = max(0, start_frame - int(0.050 / 0.0125))
-        end_frame = min(len(out_feats), end_frame + int(0.100 / 0.0125))
-        out_feats = out_feats[start_frame:end_frame]
-        # 時間領域で音声の長さを調整
-        x = x[int(start_frame * 0.0125 * sr) :]
-        length = int(sr * 0.0125) * out_feats.shape[0]
-        x = pad_1d(x, length) if len(x) < length else x[:length]
-        """
         
         # 特徴量のアップサンプリングを行う都合上、音声波形の長さはフレームシフトで割り切れる必要があります
         assert len(x) % int(sr * 0.0125) == 0
@@ -113,7 +112,7 @@ def preprocess(
         print("x:", x)
 
         # save to files
-        utt_id = lab_file.stem
+        utt_id = os.path.basename(lab_file).split('.')[0]  # 拡張子を除いたファイル名
         # デバッグ用ログ
         print("Saving files for:", utt_id)
         np.save(in_dir / f"{utt_id}-feats.npy", in_feats, allow_pickle=False)
