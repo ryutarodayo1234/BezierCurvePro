@@ -82,74 +82,61 @@ def preprocess(
     
     # デバッグ用ログ
     print("Starting preprocess for:", os.path.basename(lab_file))
-    # ラベルファイルのルートディレクトリ
-    lab_root = "/content/recipes/tacotron/downloads/lab_files"
-    # wavファイルのルートディレクトリ
-    wav_root = "/content/recipes/tacotron/downloads/corpus_files"
-    # ラベルファイルのリストを取得
-    label_files = glob.glob(os.path.join(lab_root, "files*"))
     
-    # 各ラベルファイルに対して特徴量を計算
-    for lab_file in label_files:
-        # wavファイルのパスを取得
-        wav_file = os.path.join(wav_root, os.path.basename(lab_file).replace(".lab", ".wav"))
-        # ラベルファイル名とwavファイル名が一致することを確認
-        assert os.path.splitext(wav_file)[0] == os.path.splitext(lab_file)[0]
-        # ラベルファイルを読み込む
-        with open(lab_file, 'r') as f:
-            labels = f.readlines()
+    # ラベルファイルを読み込む
+    with open(lab_file, 'r') as f:
+        labels = f.readlines()
 
-        # 特徴量を格納するリスト
-        features = []
-        # 各行のラベル情報から特徴量を計算
-        for line in labels:
-            # 各行をタブで分割して情報を取得
-            start_time, end_time, pitch = line.strip().split('\t')
-            # 開始時間と終了時間をfloat型に変換
-            start_time = float(start_time)
-            end_time = float(end_time)
-            # 音符の長さを計算
-            duration = end_time - start_time
-            # ピッチ（音高）を数値に変換
-            pitch_value = pitch_to_number(pitch)
-            # 特徴量として開始時間、終了時間、ピッチ、音符の長さを追加
-            features.append([start_time, end_time, pitch_value, duration])
+    # 特徴量を格納するリスト
+    features = []
+    
+    # 各行のラベル情報から特徴量を計算
+    for line in labels:
+        # 各行をタブで分割して情報を取得
+        start_time, end_time, pitch = line.strip().split('\t')
+        # 開始時間と終了時間をfloat型に変換
+        start_time = float(start_time)
+        end_time = float(end_time)
+        # 音符の長さを計算
+        duration = end_time - start_time
+        # ピッチ（音高）を数値に変換
+        pitch_value = pitch_to_number(pitch)
+        # 特徴量として開始時間、終了時間、ピッチ、音符の長さを追加
+        features.append([start_time, end_time, pitch_value, duration])
 
-        # wavファイルを読み込む
-        _sr, x = wavfile.read(wav_file)
-        # メルスペクトログラムの計算
-        if x.dtype in [np.int16, np.int32]:
-            x = (x / np.iinfo(x.dtype).max).astype(np.float64)
-        x = librosa.resample(y=x, orig_sr=_sr, target_sr=sr)
-        out_feats = logmelspectrogram(x, sr)
-        
-        # 特徴量のアップサンプリングを行う都合上、音声波形の長さはフレームシフトで割り切れる必要があります
-        assert len(x) % int(sr * 0.0125) == 0
-        # mu-law量子化
-        x = mulaw_quantize(x, mu)
+        # 特徴量のリストをNumPy配列に変換
+        in_feats = np.array(features, dtype=np.float32)
 
-        # in_feats、out_feats、xの値を確認
-        print("in_feats:", in_feats)
-        print("out_feats:", out_feats)
-        print("x:", x)
+    # wavファイルを読み込む
+    _sr, x = wavfile.read(wav_file)
+    # メルスペクトログラムの計算
+    if x.dtype in [np.int16, np.int32]:
+        x = (x / np.iinfo(x.dtype).max).astype(np.float64)
+    x = librosa.resample(y=x, orig_sr=_sr, target_sr=sr)
+    out_feats = logmelspectrogram(x, sr)
 
-        # save to files
-        utt_id = os.path.basename(lab_file).split('.')[0]  # 拡張子を除いたファイル名
-        # デバッグ用ログ
-        print("Saving files for:", utt_id)
-        np.save(in_dir / f"{utt_id}-feats.npy", in_feats, allow_pickle=False)
-        np.save(
-            out_dir / f"{utt_id}-feats.npy",
-            out_feats.astype(np.float32),
-            allow_pickle=False,
-        )
-        np.save(
-            wave_dir / f"{utt_id}-feats.npy",
-            x.astype(np.int64),
-            allow_pickle=False,
-        )
-        # デバッグ用ログ
-        print("Preprocessing completed.")
+    # 特徴量のアップサンプリングを行う都合上、音声波形の長さはフレームシフトで割り切れる必要があります
+    assert len(x) % int(sr * 0.0125) == 0
+    # mu-law量子化
+    x = mulaw_quantize(x, mu)
+
+    # save to files
+    utt_id = os.path.basename(lab_file).split('.')[0]  # 拡張子を除いたファイル名
+    # デバッグ用ログ
+    print("Saving files for:", utt_id)
+    np.save(in_dir / f"{utt_id}-feats.npy", in_feats, allow_pickle=False)
+    np.save(
+        out_dir / f"{utt_id}-feats.npy",
+        out_feats.astype(np.float32),
+        allow_pickle=False,
+    )
+    np.save(
+        wave_dir / f"{utt_id}-feats.npy",
+        x.astype(np.int64),
+        allow_pickle=False,
+    )
+    # デバッグ用ログ
+    print("Preprocessing completed.")
 
 if __name__ == "__main__":
     args = get_parser().parse_args(sys.argv[1:])
