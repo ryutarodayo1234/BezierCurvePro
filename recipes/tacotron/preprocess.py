@@ -55,6 +55,27 @@ def preprocess(
     out_dir,
     wave_dir,
 ):
+    
+    def pitch_to_number(pitch):
+        # 各音名に対するピッチを定義
+        pitch_map = {
+            'C': 0,
+            'D-': 1,
+            'D': 2,
+            'E-': 3,
+            'E': 4,
+            'F': 5,
+            'G-': 6,
+            'G': 7,
+            'A-': 8,
+            'A': 9,
+            'B-': 10,
+            'B': 11
+        }
+        # ピッチを数値に変換して返す
+        note, octave = pitch[:-1], int(pitch[-1])
+        return pitch_map[note] + octave * 12
+    
     # デバッグ用ログ
     print("Starting preprocess for:", os.path.basename(lab_file))
     # ラベルファイルのルートディレクトリ
