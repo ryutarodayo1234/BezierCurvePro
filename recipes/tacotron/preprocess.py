@@ -116,12 +116,6 @@ def preprocess(
     x = librosa.resample(y=x, orig_sr=_sr, target_sr=sr)
     out_feats = logmelspectrogram(x, sr)
 
-    # 波形の後ろから必要な長さまでを切り取る
-    required_length = int(sr * 0.0125 * np.ceil(len(x) / (sr * 0.0125)))
-    trimmed_x = x[:required_length]
-    # 元のファイルに切り取った波形を上書きする
-    wavfile.write(wav_file, sr, trimmed_x)
-
     # 特徴量のアップサンプリングを行う都合上、音声波形の長さはフレームシフトで割り切れる必要があります
     assert len(x) % int(sr * 0.0125) == 0
     # mu-law量子化
