@@ -8,10 +8,13 @@ import numpy as np
 from nnmnkwii.io import hts
 from nnmnkwii.preprocessing import mulaw_quantize
 from scipy.io import wavfile
+import scipy.io.wavfile as wavfile
+
 from tqdm import tqdm
 
 import os
 import glob
+
 
 import requests
 
