@@ -116,8 +116,6 @@ def preprocess(
     x = librosa.resample(y=x, orig_sr=_sr, target_sr=sr)
     out_feats = logmelspectrogram(x, sr)
 
-    import scipy.io.wavfile as wavfile
-
     # 波形の後ろから必要な長さまでを切り取る
     required_length = int(sr * 0.0125 * np.ceil(len(x) / (sr * 0.0125)))
     trimmed_x = x[:required_length]
