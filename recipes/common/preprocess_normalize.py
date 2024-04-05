@@ -22,6 +22,8 @@ def get_parser():
 
 def process(path, scaler, inverse, out_dir):
     x = np.load(path)
+    print(f"File: {path.name}")
+    print(f"Original data range: [{np.min(x)}, {np.max(x)}]")
     if inverse:
         y = scaler.inverse_transform(x)
     else:
