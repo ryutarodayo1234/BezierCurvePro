@@ -11,64 +11,14 @@ from torch import nn
 from tqdm import tqdm
 from ttslearn.tacotron.frontend.openjtalk import sequence_to_text
 from ttslearn.train_util import (
-    #collate_fn_tacotron,
+    collate_fn_tacotron,
     get_epochs_with_optional_tqdm,
     plot_2d_feats,
     plot_attention,
     save_checkpoint,
     setup,
-    ensure_divisible_by
 )
-from ttslearn.util import make_non_pad_mask, pad_1d, pad_2d
-
-import torch
-
-def collate_fn_tacotron(batch, reduction_factor=1):
-    """Collate function for Tacotron.
-
-    Args:
-        batch (list): List of tuples of the form (inputs, targets).
-        reduction_factor (int, optional): Reduction factor. Defaults to 1.
-
-    Returns:
-        tuple: Batch of inputs, input lengths, targets, target lengths and stop flags.
-    """
-    xs = [x[0] for x in batch]
-    ys = [ensure_divisible_by(x[1], reduction_factor) for x in batch]
-
-    # Get lengths of input and target sequences
-    in_lens = [len(x) for x in xs]
-    out_lens = [len(y) for y in ys]
-
-    # Find maximum sequence lengths in the batch
-    in_max_len = max(in_lens)
-    out_max_len = max(out_lens)
-
-    # Pad input sequences to the maximum length
-    x_batch = torch.stack([torch.from_numpy(pad_1d(x, in_max_len)) for x in xs])
-
-    # Pad target sequences to the maximum length
-    y_batch = torch.stack([torch.from_numpy(pad_2d(y, out_max_len)) for y in ys])
-
-    # Create tensors for input and target sequence lengths
-    il_batch = torch.tensor(in_lens, dtype=torch.long)
-    ol_batch = torch.tensor(out_lens, dtype=torch.long)
-
-    # Create stop flags
-    stop_flags = torch.zeros(y_batch.shape[0], y_batch.shape[1])
-    for idx, out_len in enumerate(out_lens):
-        stop_flags[idx, out_len - 1 :] = 1.0
-
-    return x_batch, il_batch, y_batch, ol_batch, stop_flags
-
-# Example usage
-batch = [([1, 2, 3], [4, 5, 6]), ([7, 8], [9, 10, 11, 12])]
-x_batch, il_batch, y_batch, ol_batch, stop_flags = collate_fn_tacotron(batch)
-print("x_batch:", x_batch)
-print("il_batch:", il_batch)
-print("y_batch:", y_batch)
-print("ol_batch:", ol_batch)
-print("stop_flags:", stop_flags)
+from ttslearn.util import make_non_pad_mask
 
 logger: Logger = None
 
