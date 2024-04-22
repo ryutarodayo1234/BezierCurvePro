@@ -95,9 +95,11 @@ def preprocess(
     for line in labels:
         # 各行をタブで分割して情報を取得
         start_time, end_time, pitch = line.strip().split('\t')
+
         # 開始時間と終了時間をfloat型に変換
-        start_time = float(start_time)
-        end_time = float(end_time)
+        #start_time = float(start_time)
+        #end_time = float(end_time)
+        
         # 音符の長さを計算
         duration = end_time - start_time
         # ピッチ（音高）を数値に変換
@@ -116,10 +118,16 @@ def preprocess(
     x = librosa.resample(y=x, orig_sr=_sr, target_sr=sr)
     out_feats = logmelspectrogram(x, sr)
 
+    # 冒頭と末尾の非音声区間の長さを調整
+    assert "sil" in labels.contexts[0] and "sil" in labels.contexts[-1]
+    start_frame = int(labels.start_times[1] / 125000)
+    end_frame = int(labels.end_times[-2] / 125000)
+
     # 特徴量のアップサンプリングを行う都合上、音声波形の長さはフレームシフトで割り切れる必要があります
     assert len(x) % int(sr * 0.0125) == 0
     # mu-law量子化
     x = mulaw_quantize(x, mu)
+    
 
     # save to files
     utt_id = os.path.basename(lab_file).split('.')[0]  # 拡張子を除いたファイル名
