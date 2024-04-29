@@ -104,8 +104,8 @@ def preprocess(
         features.append([start_time, end_time, pitch_value, duration])
 
         # 特徴量のリストをNumPy配列に変換
-        in_feats = np.array(features, dtype=np.float32)
-        
+        in_feats = np.array(features, dtype=np.int64)
+
     assert wav_file.stem == lab_file.stem
     labels = hts.load(lab_file)
     # 韻律記号付き音素列の抽出
