@@ -108,7 +108,7 @@ def preprocess(
         features.append([start_time, end_time, pitch_value, duration])
 
         # 特徴量のリストをNumPy配列に変換
-        in_feats = np.array(features, dtype=np.float32)
+        in_feats = np.array(features, dtype=np.int32)
 
     # wavファイルを読み込む
     _sr, x = wavfile.read(wav_file)
@@ -125,11 +125,6 @@ def preprocess(
 
     # 特徴量のアップサンプリングを行う都合上、音声波形の長さはフレームシフトで割り切れる必要があります
     assert len(x) % int(sr * 0.0125) == 0
-
-    # 波形の長さが条件を満たすようにトリミングする
-    required_length = int(sr * 0.0125 * np.floor(len(x) / (sr * 0.0125)))
-    trimmed_x = x[-required_length:]  # 後ろからトリミングする
-
     # mu-law量子化
     x = mulaw_quantize(x, mu)
     
