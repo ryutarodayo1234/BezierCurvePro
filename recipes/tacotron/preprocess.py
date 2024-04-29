@@ -97,8 +97,8 @@ def preprocess(
         start_time, end_time, pitch = line.strip().split('\t')
 
         # 開始時間と終了時間をfloat型に変換
-        #start_time = float(start_time)
-        #end_time = float(end_time)
+        start_time = int(start_time)
+        end_time = int(end_time)
         
         # 音符の長さを計算
         duration = end_time - start_time
