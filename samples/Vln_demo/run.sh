@@ -68,7 +68,7 @@ if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
     #deveval.list ファイルの下位 100 行を data/eval.list に書き込みます。これは評価データに使用されます。
     #不要な deveval.list ファイルを削除します。
     head -n 15 data/utt_list.txt > data/train.list
-    tail -1 data/utt_list.txt > data/deveval.list
+    tail -n 1 data/utt_list.txt > data/deveval.list
     head -n 5 data/deveval.list > data/dev.list
     tail -n 5 data/deveval.list > data/eval.list
     rm -f data/deveval.list
