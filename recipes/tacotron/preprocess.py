@@ -96,10 +96,6 @@ def preprocess(
         # 各行をタブで分割して情報を取得
         start_time, end_time, pitch = line.strip().split('\t')
 
-        # 開始時間と終了時間をfloat型に変換
-        #start_time = float(start_time)
-        #end_time = float(end_time)
-        
         # 音符の長さを計算
         duration = end_time - start_time
         # ピッチ（音高）を数値に変換
@@ -109,13 +105,18 @@ def preprocess(
 
         # 特徴量のリストをNumPy配列に変換
         in_feats = np.array(features, dtype=np.float32)
+        
+    assert wav_file.stem == lab_file.stem
+    labels = hts.load(lab_file)
+    # 韻律記号付き音素列の抽出
+    PP = pp_symbols(labels.contexts)
+    in_feats = np.array(text_to_sequence(PP), dtype=np.int64)
 
-    # wavファイルを読み込む
-    _sr, x = wavfile.read(wav_file)
     # メルスペクトログラムの計算
+    _sr, x = wavfile.read(wav_file)
     if x.dtype in [np.int16, np.int32]:
         x = (x / np.iinfo(x.dtype).max).astype(np.float64)
-    x = librosa.resample(y=x, orig_sr=_sr, target_sr=sr)
+    x = librosa.resample(x, orig_sr=_sr, target_sr=sr)
     out_feats = logmelspectrogram(x, sr)
 
     # 冒頭と末尾の非音声区間の長さを調整
@@ -123,8 +124,20 @@ def preprocess(
     start_frame = int(labels.start_times[1] / 125000)
     end_frame = int(labels.end_times[-2] / 125000)
 
+    # 冒頭： 50 ミリ秒、末尾： 100 ミリ秒
+    start_frame = max(0, start_frame - int(0.050 / 0.0125))
+    end_frame = min(len(out_feats), end_frame + int(0.100 / 0.0125))
+
+    out_feats = out_feats[start_frame:end_frame]
+
+    # 時間領域で音声の長さを調整
+    x = x[int(start_frame * 0.0125 * sr) :]
+    length = int(sr * 0.0125) * out_feats.shape[0]
+    x = pad_1d(x, length) if len(x) < length else x[:length]
+
     # 特徴量のアップサンプリングを行う都合上、音声波形の長さはフレームシフトで割り切れる必要があります
     assert len(x) % int(sr * 0.0125) == 0
+
     # mu-law量子化
     x = mulaw_quantize(x, mu)
     
