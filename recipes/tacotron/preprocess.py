@@ -112,20 +112,6 @@ def preprocess(
 
     # wavファイルを読み込む
     _sr, x = wavfile.read(wav_file)
-
-    # デバッグ用: トリミング前の波形の長さを出力
-    print("Before trimming - Length of waveform:", len(x))
-
-    # 波形の長さが条件を満たすようにトリミングする
-    required_length = int(sr * 0.0125 * np.floor(len(x) / (sr * 0.0125)))
-    trimmed_x = x[-required_length:]  # 後ろからトリミングする
-
-     # デバッグ用: トリミング後の波形の長さを出力
-    print("After trimming - Length of waveform:", len(trimmed_x))
-
-    # 元のファイルにトリミングされた波形を上書きする
-    wavfile.write(wav_file, sr, trimmed_x)
-    
     # メルスペクトログラムの計算
     if x.dtype in [np.int16, np.int32]:
         x = (x / np.iinfo(x.dtype).max).astype(np.float64)
