@@ -119,8 +119,8 @@ def preprocess(
     print("Before trimming - Length of waveform:", len(x))
 
     # 波形の長さが条件を満たすようにトリミングする
-    required_length = int(sr * 0.0125 * np.floor(len(x) / (sr * 0.0125)))
-    trimmed_x = x[-required_length:]  # 後ろからトリミングする
+    remainder = len(x) % int(sr * 0.0125)
+    trimmed_x = x[:-remainder]  # 後ろからトリミングする
 
     # デバッグ用: トリミング後の波形の長さを出力
     print("After trimming - Length of waveform:", len(trimmed_x))
