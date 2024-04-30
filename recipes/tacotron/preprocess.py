@@ -91,7 +91,6 @@ def preprocess(
     # 特徴量を格納するリスト
     features = []
     
-    '''
     # 各行のラベル情報から特徴量を計算
     for line in labels:
         # 各行をタブで分割して情報を取得
@@ -111,7 +110,6 @@ def preprocess(
 
         # 特徴量のリストをNumPy配列に変換
         in_feats = np.array(features, dtype=np.float32)
-    '''
 
     assert wav_file.stem == lab_file.stem
     labels = hts.load(lab_file)
