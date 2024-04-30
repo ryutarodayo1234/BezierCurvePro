@@ -106,8 +106,8 @@ def preprocess(
         # ピッチ（音高）を数値に変換
         pitch_value = pitch_to_number(pitch)
         # 特徴量として開始時間、ピッチ、音符の長さを追加
-        # *****終了時間、end_time,を削除、音符の長さがあればいらない？*****
-        features.append([start_time, pitch_value, duration])
+        # *****終了時間、 durationを削除、end timeがあればいらない？*****
+        features.append([start_time, end_time, pitch_value])
 
         # 特徴量のリストをNumPy配列に変換
         in_feats = np.array(features, dtype=np.float32)
