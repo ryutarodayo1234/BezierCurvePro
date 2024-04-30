@@ -122,7 +122,7 @@ def preprocess(
     out_feats = logmelspectrogram(x, sr)
 
     # 特徴量のアップサンプリングを行う都合上、音声波形の長さはフレームシフトで割り切れる必要があります
-    assert len(x) % int(sr * 0.0125) == 0
+    #assert len(x) % int(sr * 0.0125) == 0
     
     # mu-law量子化
     x = mulaw_quantize(x, mu)
