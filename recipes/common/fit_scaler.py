@@ -25,3 +25,5 @@ if __name__ == "__main__":
     with open(args.utt_list) as f:
         for utt_id in tqdm(f):
             c = np.load(in_dir / f"{utt_id.strip()}-feats.npy")
+            scaler.partial_fit(c)
+        joblib.dump(scaler, args.out_path)
