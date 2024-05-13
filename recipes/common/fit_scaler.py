@@ -4,7 +4,7 @@ from pathlib import Path
 
 import joblib
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 
 def get_parser():
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     if args.external_scaler is not None:
         scaler = joblib.load(args.external_scaler)
     else:
-        scaler = MinMaxScaler()  # MinMaxScalerを使用する
+        scaler = StandardScaler()  # MinMaxScalerを使用する
     with open(args.utt_list) as f:
         for utt_id in tqdm(f):
             c = np.load(in_dir / f"{utt_id.strip()}-feats.npy")
