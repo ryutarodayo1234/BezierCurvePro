@@ -1,29 +1,35 @@
 import argparse
 import sys
 from pathlib import Path
-
-import joblib
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
 from tqdm import tqdm
 
 def get_parser():
-    parser = argparse.ArgumentParser(description="Fit scalers")
-    parser.add_argument("utt_list", type=str, help="utternace list")
-    parser.add_argument("in_dir", type=str, help="in directory")
-    parser.add_argument("out_path", type=str, help="Output path")
-    parser.add_argument("--external_scaler", type=str, help="External scaler")
+    parser = argparse.ArgumentParser(description="Normalize features")
+    parser.add_argument("utt_list", type=str, help="Utterance list")
+    parser.add_argument("in_dir", type=str, help="Input directory")
+    parser.add_argument("out_path", type=str, help="Output path for scaler")
     return parser
+
+def normalize_features(data):
+    # データの正規化処理を実装
+    # ここでは例として、最小値と最大値を使用した正規化を行います
+    min_val = np.min(data)
+    max_val = np.max(data)
+    normalized_data = (data - min_val) / (max_val - min_val)
+    return normalized_data
 
 if __name__ == "__main__":
     args = get_parser().parse_args(sys.argv[1:])
     in_dir = Path(args.in_dir)
-    if args.external_scaler is not None:
-        scaler = joblib.load(args.external_scaler)
-    else:
-        scaler = MinMaxScaler()  # MinMaxScalerを使用する
+    
+    normalized_data_list = []
+
     with open(args.utt_list) as f:
         for utt_id in tqdm(f):
             c = np.load(in_dir / f"{utt_id.strip()}-feats.npy")
-            scaler.partial_fit(c)
-        joblib.dump(scaler, args.out_path)
+            normalized_data = normalize_features(c)
+            normalized_data_list.append(normalized_data)
+
+    # 正規化したデータの統計情報を保存する代わりに、正規化されたデータ自体を保存します
+    np.save(args.out_path, np.array(normalized_data_list))
