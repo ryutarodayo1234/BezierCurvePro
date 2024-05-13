@@ -90,8 +90,6 @@ if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
             xrun python $COMMON_ROOT/fit_scaler.py data/train.list \
                 $dump_org_dir/$train_set/${inout}_${typ} \
                 $dump_org_dir/${inout}_${typ}_scaler.joblib
-                import numpy as np
-
         done
     done
 
