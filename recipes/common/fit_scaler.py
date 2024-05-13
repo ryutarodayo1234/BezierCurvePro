@@ -22,12 +22,8 @@ if __name__ == "__main__":
         scaler = joblib.load(args.external_scaler)
     else:
         scaler = MinMaxScaler()  # MinMaxScalerを使用する
-    normalized_data_list = []
     with open(args.utt_list) as f:
         for utt_id in tqdm(f):
             c = np.load(in_dir / f"{utt_id.strip()}-feats.npy")
-            normalized_data = scaler.fit_transform(c)  # データを正規化
-            normalized_data_list.append(normalized_data)
-        # リストをnumpyの多次元配列に変換
-        normalized_data_array = np.array(normalized_data_list)
-        np.save(args.out_path, normalized_data_array)
+            scaler.partial_fit(c)
+        joblib.dump(scaler, args.out_path)
