@@ -91,16 +91,6 @@ if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
                 $dump_org_dir/$train_set/${inout}_${typ} \
                 $dump_org_dir/${inout}_${typ}_scaler.joblib
                 import numpy as np
-                
-                # データをロードする
-                data = np.load("data.npy")
-
-                # 各特徴量の最小値と最大値を取得
-                min_vals = np.min(data, axis=0)
-                max_vals = np.max(data, axis=0)
-
-                # 正規化する
-                normalized_data = (data - min_vals) / (max_vals - min_vals)
 
         done
     done
