@@ -21,7 +21,7 @@ if __name__ == "__main__":
     if args.external_scaler is not None:
         scaler = joblib.load(args.external_scaler)
     else:
-        scaler = StandardScaler(feature_range=(0, 1), copy=True)  # StandardScalerを使用する
+        scaler = StandardScaler()  # StandardScalerを使用する
     with open(args.utt_list) as f:
         for utt_id in tqdm(f):
             c = np.load(in_dir / f"{utt_id.strip()}-feats.npy")
