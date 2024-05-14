@@ -1,0 +1,67 @@
+model:
+  netG:
+    _target_: ttslearn.tacotron.Tacotron2
+    num_vocab: 52
+    reduction_factor: 2
+    embed_dim: 512
+    encoder_hidden_dim: 512
+    decoder_out_dim: 80
+    encoder_conv_layers: 3
+    encoder_conv_channels: 512
+    encoder_conv_kernel_size: 5
+    encoder_dropout: 0.5
+    attention_hidden_dim: 128
+    attention_conv_channels: 32
+    attention_conv_kernel_size: 31
+    decoder_layers: 2
+    decoder_hidden_dim: 1024
+    decoder_prenet_layers: 2
+    decoder_prenet_hidden_dim: 256
+    decoder_prenet_dropout: 0.5
+    postnet_layers: 5
+    postnet_channels: 512
+    postnet_kernel_size: 5
+    postnet_dropout: 0.5
+    decoder_zoneout: 0.1
+verbose: 100
+seed: 773
+tqdm: tqdm
+cudnn:
+  benchmark: true
+  deterministic: false
+data_parallel: false
+data:
+  train:
+    utt_list: data/train.list
+    in_dir: dump/jsut_sr16000/norm/train/in_tacotron/
+    out_dir: dump/jsut_sr16000/norm/train/out_tacotron/
+  dev:
+    utt_list: data/dev.list
+    in_dir: dump/jsut_sr16000/norm/dev/in_tacotron/
+    out_dir: dump/jsut_sr16000/norm/dev/out_tacotron/
+  num_workers: 4
+  batch_size: 32
+train:
+  out_dir: exp/jsut_sr16000/tacotron2_rf2
+  log_dir: tensorboard/jsut_sr16000_tacotron2_rf2
+  max_train_steps: 100000
+  nepochs: 681
+  checkpoint_epoch_interval: 50
+  eval_epoch_interval: 10
+  optim:
+    optimizer:
+      name: Adam
+      params:
+        lr: 0.001
+        betas:
+        - 0.9
+        - 0.999
+        eps: 1.0e-06
+        weight_decay: 0
+    lr_scheduler:
+      name: StepLR
+      params:
+        step_size: 100000
+        gamma: 0.5
+  pretrained:
+    checkpoint: null

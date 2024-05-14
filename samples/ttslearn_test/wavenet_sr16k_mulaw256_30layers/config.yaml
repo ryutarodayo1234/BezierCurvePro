@@ -1,0 +1,58 @@
+verbose: 100
+seed: 773
+cudnn:
+  benchmark: true
+  deterministic: false
+data_parallel: false
+data:
+  train:
+    utt_list: data/train.list
+    in_dir: dump/jsut_sr16000/norm/train/out_tacotron/
+    out_dir: dump/jsut_sr16000/org/train/out_wavenet/
+  dev:
+    utt_list: data/dev.list
+    in_dir: dump/jsut_sr16000/norm/dev/out_tacotron/
+    out_dir: dump/jsut_sr16000/org/dev/out_wavenet/
+  num_workers: 4
+  batch_size: 16
+  max_time_frames: 50
+  hop_size: 200
+  aux_context_window: 2
+train:
+  out_dir: exp/jsut_sr16000/wavenet_sr16k_mulaw256_30layers.yaml
+  log_dir: tensorboard/jsut_sr16000_wavenet_sr16k_mulaw256_30layers.yaml
+  max_train_steps: 500000
+  nepochs: 1701
+  checkpoint_epoch_interval: 50
+  optim:
+    optimizer:
+      name: Adam
+      params:
+        lr: 0.001
+        betas:
+        - 0.9
+        - 0.999
+        eps: 1.0e-08
+        weight_decay: 0.0
+    lr_scheduler:
+      name: StepLR
+      params:
+        step_size: 200000
+        gamma: 0.5
+model:
+  netG:
+    _target_: ttslearn.wavenet.WaveNet
+    out_channels: 256
+    layers: 30
+    stacks: 3
+    residual_channels: 64
+    gate_channels: 128
+    skip_out_channels: 64
+    kernel_size: 3
+    cin_channels: 80
+    upsample_scales:
+    - 2
+    - 4
+    - 5
+    - 5
+    aux_context_window: 2
