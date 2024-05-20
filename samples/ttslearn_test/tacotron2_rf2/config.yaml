@@ -65,3 +65,6 @@ train:
         gamma: 0.5
   pretrained:
     checkpoint: null
+
+sample_rate: 22050
+mu: 256

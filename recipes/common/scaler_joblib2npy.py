@@ -4,7 +4,7 @@ from pathlib import Path
 
 import joblib
 import numpy as np
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 
 
 def get_parser():
@@ -20,7 +20,7 @@ if __name__ == "__main__":
 
     input_file = Path(args.input_file)
     scaler = joblib.load(input_file)
-    assert isinstance(scaler, StandardScaler)
+    assert isinstance(scaler, MinMaxScaler)
 
     print(f"Converting {input_file} mean/scale npy files")
 
