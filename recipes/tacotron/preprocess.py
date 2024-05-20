@@ -91,6 +91,7 @@ def preprocess(
     # 特徴量を格納するリスト
     features = []
     
+    '''
     # 各行のラベル情報から特徴量を計算
     for line in labels:
         # 各行をタブで分割して情報を取得
@@ -110,13 +111,14 @@ def preprocess(
 
         # 特徴量のリストをNumPy配列に変換
         in_feats = np.array(features, dtype=np.float32)
+    '''
 
     assert wav_file.stem == lab_file.stem
     labels = hts.load(lab_file)
 
     # 韻律記号付き音素列の抽出
-    #PP = pp_symbols(labels.contexts)
-    #in_feats = np.array(text_to_sequence(PP), dtype=np.int64)
+    PP = pp_symbols(labels.contexts)
+    in_feats = np.array(text_to_sequence(PP), dtype=np.int64)
 
     # メルスペクトログラムの計算
     _sr, x = wavfile.read(wav_file)
@@ -126,7 +128,7 @@ def preprocess(
     out_feats = logmelspectrogram(x, sr)
 
     # 冒頭と末尾の非音声区間の長さを調整
-    #assert "sil" in labels.contexts[0] and "sil" in labels.contexts[-1]
+    assert "sil" in labels.contexts[0] and "sil" in labels.contexts[-1]
     start_frame = int(labels.start_times[1] / 125000)
     end_frame = int(labels.end_times[-2] / 125000)
 
