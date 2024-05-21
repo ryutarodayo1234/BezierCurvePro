@@ -114,6 +114,16 @@ fi
 
 if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
     echo "stage 3: Training Tacotron"
+    '''
+    if [ ${finetuning} = "true" ] && [ -z ${pretrained_acoustic_checkpoint} ]; then
+        pretrained_acoustic_checkpoint=$PWD/../../jsut/tacotron2_pwg/exp/jsut_sr${sample_rate}/${acoustic_model}/${acoustic_eval_checkpoint}
+        if [ ! -e $pretrained_acoustic_checkpoint ]; then
+            echo "Please first train a acoustic model for JSUT corpus!"
+            echo "Expected model path: $pretrained_acoustic_checkpoint"
+            exit 1
+        fi
+    fi
+    '''
     xrun python train_tacotron.py model=$acoustic_model tqdm=$tqdm \
         data.train.utt_list=data/train.list \
         data.train.in_dir=$dump_norm_dir/$train_set/in_tacotron/ \
@@ -125,7 +135,8 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
         train.log_dir=tensorboard/${expname}_${acoustic_model} \
         train.max_train_steps=$tacotron_train_max_train_steps \
         data.batch_size=$tacotron_data_batch_size \
-        cudnn.benchmark=$cudnn_benchmark cudnn.deterministic=$cudnn_deterministic
+        cudnn.benchmark=$cudnn_benchmark cudnn.deterministic=$cudnn_deterministic #\
+        #train.pretrained.checkpoint=$pretrained_acoustic_checkpoint
 fi
 
 if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
@@ -143,6 +154,30 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
         data.batch_size=$wavenet_data_batch_size \
         cudnn.benchmark=$cudnn_benchmark cudnn.deterministic=$cudnn_deterministic
 fi
+
+'''
+
+if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
+    echo "stage 4: Training Parallel WaveGAN"
+    if [ ${finetuning} = "true" ] && [ -z ${pretrained_vocoder_checkpoint} ]; then
+        voc_expdir=$PWD/../../jsut/tacotron2_pwg/exp/jsut_sr${sample_rate}/${vocoder_model}
+        pretrained_vocoder_checkpoint="$(ls -dt "$voc_expdir"/*.pkl | head -1 || true)"
+        if [ ! -e $pretrained_vocoder_checkpoint ]; then
+            echo "Please first train a PWG model for JSUT corpus!"
+            echo "Expected model path: $pretrained_vocoder_checkpoint"
+            exit 1
+        fi
+        extra_args="--resume $pretrained_vocoder_checkpoint"
+    else
+        extra_args=""
+    fi
+    xrun parallel-wavegan-train --config $parallel_wavegan_config \
+        --train-dumpdir $dump_norm_dir/$train_set/out_tacotron \
+        --dev-dumpdir $dump_norm_dir/$dev_set/out_tacotron/ \
+        --outdir $expdir/$vocoder_model $extra_args
+fi
+
+'''
 
 if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
     echo "stage 5: Synthesis waveforms by the griffin-lim algorithm"
