@@ -114,16 +114,6 @@ fi
 
 if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
     echo "stage 3: Training Tacotron"
-    '''
-    if [ ${finetuning} = "true" ] && [ -z ${pretrained_acoustic_checkpoint} ]; then
-        pretrained_acoustic_checkpoint=$PWD/../../jsut/tacotron2_pwg/exp/jsut_sr${sample_rate}/${acoustic_model}/${acoustic_eval_checkpoint}
-        if [ ! -e $pretrained_acoustic_checkpoint ]; then
-            echo "Please first train a acoustic model for JSUT corpus!"
-            echo "Expected model path: $pretrained_acoustic_checkpoint"
-            exit 1
-        fi
-    fi
-    '''
     xrun python train_tacotron.py model=$acoustic_model tqdm=$tqdm \
         data.train.utt_list=data/train.list \
         data.train.in_dir=$dump_norm_dir/$train_set/in_tacotron/ \
@@ -135,8 +125,7 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
         train.log_dir=tensorboard/${expname}_${acoustic_model} \
         train.max_train_steps=$tacotron_train_max_train_steps \
         data.batch_size=$tacotron_data_batch_size \
-        cudnn.benchmark=$cudnn_benchmark cudnn.deterministic=$cudnn_deterministic #\
-        #train.pretrained.checkpoint=$pretrained_acoustic_checkpoint
+        cudnn.benchmark=$cudnn_benchmark cudnn.deterministic=$cudnn_deterministic
 fi
 
 if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
@@ -156,6 +145,31 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
 fi
 
 '''
+
+if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
+    echo "stage 3: Training Tacotron"
+    if [ ${finetuning} = "true" ] && [ -z ${pretrained_acoustic_checkpoint} ]; then
+        pretrained_acoustic_checkpoint=$PWD/../../jsut/tacotron2_pwg/exp/jsut_sr${sample_rate}/${acoustic_model}/${acoustic_eval_checkpoint}
+        if [ ! -e $pretrained_acoustic_checkpoint ]; then
+            echo "Please first train a acoustic model for JSUT corpus!"
+            echo "Expected model path: $pretrained_acoustic_checkpoint"
+            exit 1
+        fi
+    fi
+    xrun python train_tacotron.py model=$acoustic_model tqdm=$tqdm \
+        data.train.utt_list=data/train.list \
+        data.train.in_dir=$dump_norm_dir/$train_set/in_tacotron/ \
+        data.train.out_dir=$dump_norm_dir/$train_set/out_tacotron/ \
+        data.dev.utt_list=data/dev.list \
+        data.dev.in_dir=$dump_norm_dir/$dev_set/in_tacotron/ \
+        data.dev.out_dir=$dump_norm_dir/$dev_set/out_tacotron/ \
+        train.out_dir=$expdir/${acoustic_model} \
+        train.log_dir=tensorboard/${expname}_${acoustic_model} \
+        train.max_train_steps=$tacotron_train_max_train_steps \
+        data.batch_size=$tacotron_data_batch_size \
+        cudnn.benchmark=$cudnn_benchmark cudnn.deterministic=$cudnn_deterministic #\
+        #train.pretrained.checkpoint=$pretrained_acoustic_checkpoint
+fi
 
 if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
     echo "stage 4: Training Parallel WaveGAN"
