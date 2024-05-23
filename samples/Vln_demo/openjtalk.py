@@ -46,7 +46,6 @@ phonemes = [
     "z",
     "pau",
     "sil",
-    'xx',
 ]
 
 extra_symbols = [
@@ -57,7 +56,7 @@ extra_symbols = [
     "#",  # アクセント句境界
     "[",  # ピッチの上がり位置
     "]",  # ピッチの下がり位置
-    
+    'xx',
 
 ]
 
@@ -69,10 +68,6 @@ symbols = [_pad] + extra_symbols + phonemes
 
 _symbol_to_id = {s: i for i, s in enumerate(symbols)}
 _id_to_symbol = {i: s for i, s in enumerate(symbols)}
-
-print("Symbols list:", symbols)
-print("_symbol_to_id:", _symbol_to_id)
-print("_id_to_symbol:", _id_to_symbol)
 
 
 def numeric_feature_by_regex(regex, s):
@@ -127,9 +122,6 @@ def pp_symbols(labels, drop_unvoiced_vowels=True):
             p3 = p3.lower()
 
         # 先頭と末尾の sil のみ例外対応
-        if p3 != 'xx':  # 'xx' 記号を除外する
-            PP.append(p3)
-            
         if p3 == "sil":
             assert n == 0 or n == N - 1
             if n == 0:
