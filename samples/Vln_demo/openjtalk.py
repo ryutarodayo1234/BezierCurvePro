@@ -66,7 +66,13 @@ symbols = [_pad] + extra_symbols + phonemes
 
 
 _symbol_to_id = {s: i for i, s in enumerate(symbols)}
+_symbol_to_id['xx'] = -1
+
 _id_to_symbol = {i: s for i, s in enumerate(symbols)}
+_id_to_symbol[-1] = 'xx'
+
+
+
 
 
 def numeric_feature_by_regex(regex, s):
