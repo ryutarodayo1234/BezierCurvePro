@@ -75,8 +75,6 @@ def numeric_feature_by_regex(regex, s):
         return -50
     return int(match.group(1))
 
-
-def pp_symbols(labels, drop_unvoiced_vowels=True):
     """Extract phoneme + prosoody symbol sequence from input full-context labels
 
     The algorithm is based on [Kurihara 2021] [1]_ with some tweaks.
@@ -106,6 +104,8 @@ def pp_symbols(labels, drop_unvoiced_vowels=True):
         IEICE Transactions on Information and Systems, vol. E104.D, no. 2,
         pp. 302–311, 2021.
     """
+def pp_symbols(labels, drop_unvoiced_vowels=True):
+    
     PP = []
     N = len(labels)
 
@@ -116,6 +116,11 @@ def pp_symbols(labels, drop_unvoiced_vowels=True):
         # 当該音素
         p3 = re.search(r"\-(.*?)\+", lab_curr).group(1)  # type: ignore
         p3 = p3 + "xx"
+
+        # xxの場合はそのまま追加
+        if p3 == "xx":
+            PP.append(p3)
+            continue
 
         # 無声化母音を通常の母音として扱う
         if drop_unvoiced_vowels and p3 in "AEIOU":
@@ -160,6 +165,7 @@ def pp_symbols(labels, drop_unvoiced_vowels=True):
             PP.append("[")
 
     return PP
+
 
 
 def num_vocab():
