@@ -116,6 +116,7 @@ def pp_symbols(labels, drop_unvoiced_vowels=True):
 
         # 当該音素
         p3 = re.search(r"\-(.*?)\+", lab_curr).group(1)  # type: ignore
+        p3 = p3 + "xx"
 
         # 無声化母音を通常の母音として扱う
         if drop_unvoiced_vowels and p3 in "AEIOU":
