@@ -127,6 +127,9 @@ def pp_symbols(labels, drop_unvoiced_vowels=True):
             p3 = p3.lower()
 
         # 先頭と末尾の sil のみ例外対応
+        if p3 != 'xx':  # 'xx' 記号を除外する
+            PP.append(p3)
+            
         if p3 == "sil":
             assert n == 0 or n == N - 1
             if n == 0:
