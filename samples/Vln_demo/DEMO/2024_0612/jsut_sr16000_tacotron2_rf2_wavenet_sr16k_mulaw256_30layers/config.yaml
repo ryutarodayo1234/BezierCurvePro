@@ -1,0 +1,4 @@
+sample_rate: 16000
+mu: 255
+acoustic_model: tacotron2_rf2
+wavenet_model: wavenet_sr16k_mulaw256_30layers
