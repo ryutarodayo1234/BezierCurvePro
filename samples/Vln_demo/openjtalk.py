@@ -46,7 +46,6 @@ phonemes = [
     "z",
     "pau",
     "sil",
-    "xx",
 ]
 
 extra_symbols = [
@@ -57,6 +56,7 @@ extra_symbols = [
     "#",  # アクセント句境界
     "[",  # ピッチの上がり位置
     "]",  # ピッチの下がり位置
+    "xx",
 ]
 
 _pad = "~"
