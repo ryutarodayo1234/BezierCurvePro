@@ -308,7 +308,7 @@ def logmelspectrogram(
         n_fft = next_power_of_2(win_length)
 
     S = librosa.stft(
-        y, n_fft=n_fft, hop_length=hop_length, win_length=win_length, window="hann"
+        y=y, n_fft=n_fft, hop_length=hop_length, win_length=win_length, window="hann"
     )
 
     fmin = 0 if fmin is None else fmin
