@@ -16,14 +16,6 @@ import glob
 
 import requests
 
-url = 'https://raw.githubusercontent.com/ryutarodayo1234/BezierCurvePro/main/ttslearn/dsp.py'
-filename = 'dsp.py'
-
-response = requests.get(url)
-if response.status_code == 200:
-    with open(filename, 'wb') as file:
-        file.write(response.content)
-
 # ダウンロードしたモジュールをインポート
 import dsp
 from dsp import mulaw_quantize, logmelspectrogram
