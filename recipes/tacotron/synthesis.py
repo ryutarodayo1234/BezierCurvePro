@@ -13,58 +13,38 @@ from tqdm import tqdm
 from ttslearn.tacotron.gen import synthesis, synthesis_griffin_lim
 from ttslearn.util import load_utt_list, optional_tqdm
 
-import librosa
 
 @hydra.main(config_path="conf/synthesis", config_name="config")
-
-def logmelspectrogram_to_audio(logmel, sample_rate):
-    y = librosa.griffinlim(
-        logmel,
-        n_iter=60,
-        hop_length=256, 
-        win_length=1024,
-        window='hann'  # ここを 'hann' に変更
-    )
-    return y
-
 def my_app(config: DictConfig) -> None:
-    try:
-        if not torch.cuda.is_available():
-            device = torch.device("cpu")
-        else:
-            device = torch.device(config.device)
+    if not torch.cuda.is_available():
+        device = torch.device("cpu")
+    else:
+        device = torch.device(config.device)
 
-        # Acoustic model
-        acoustic_config = OmegaConf.load(to_absolute_path(config.acoustic.model_yaml))
-        acoustic_model = hydra.utils.instantiate(acoustic_config.netG).to(device)
+    # acoustic model
+    acoustic_config = OmegaConf.load(to_absolute_path(config.acoustic.model_yaml))
+    acoustic_model = hydra.utils.instantiate(acoustic_config.netG).to(device)
+    checkpoint = torch.load(
+        to_absolute_path(config.acoustic.checkpoint),
+        map_location=device,
+    )
+    acoustic_model.load_state_dict(checkpoint["state_dict"])
+    acoustic_out_scaler = joblib.load(to_absolute_path(config.acoustic.out_scaler_path))
+    acoustic_model.eval()
+
+    # WaveNet
+    if config.use_wavenet:
+        wavenet_config = OmegaConf.load(to_absolute_path(config.wavenet.model_yaml))
+        wavenet_model = hydra.utils.instantiate(wavenet_config.netG).to(device)
         checkpoint = torch.load(
-            to_absolute_path(config.acoustic.checkpoint),
+            to_absolute_path(config.wavenet.checkpoint),
             map_location=device,
         )
-        acoustic_model.load_state_dict(checkpoint["state_dict"])
-        acoustic_out_scaler = joblib.load(to_absolute_path(config.acoustic.out_scaler_path))
-        acoustic_model.eval()
-
-        # WaveNet
-        if config.use_wavenet:
-            wavenet_config = OmegaConf.load(to_absolute_path(config.wavenet.model_yaml))
-            wavenet_model = hydra.utils.instantiate(wavenet_config.netG).to(device)
-            checkpoint = torch.load(
-                to_absolute_path(config.wavenet.checkpoint),
-                map_location=device,
-            )
-            wavenet_model.load_state_dict(checkpoint["state_dict"])
-            wavenet_model.eval()
-            wavenet_model.remove_weight_norm_()
-        else:
-            wavenet_model = None
-
-    except FileNotFoundError as e:
-        print(f"File not found: {e.filename}")
-    except KeyError as e:
-        print(f"Key error: {e.args}")
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
+        wavenet_model.load_state_dict(checkpoint["state_dict"])
+        wavenet_model.eval()
+        wavenet_model.remove_weight_norm_()
+    else:
+        wavenet_model = None
 
     in_dir = Path(to_absolute_path(config.in_dir))
     out_dir = Path(to_absolute_path(config.out_dir))
