@@ -52,7 +52,7 @@ if [ ${stage} -le -1 ] && [ ${stop_stage} -ge -1 ]; then
         cd downloads/lab_files
         curl -LO https://github.com/ryutarodayo1234/BezierCurvePro/raw/main/samples/Vln_demo/lab_files.zip
         unzip -o lab_files.zip
-        ln -s jlab_files
+        ln -s lab_files
         cd -
     fi
 fi
